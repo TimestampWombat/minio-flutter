@@ -1,0 +1,4 @@
+enum RetentionMode {
+  GOVERNANCE,
+  COMPLIANCE;
+}

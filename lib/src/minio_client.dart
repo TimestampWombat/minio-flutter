@@ -1,4 +1,6 @@
 import 'minio_async_client.dart';
+import 'stat_object_args.dart';
+import 'stat_object_response.dart';
 
 /**
  * Simple Storage Service (aka S3) client to perform bucket and object operations.
@@ -108,9 +110,11 @@ import 'minio_async_client.dart';
        {
     try {
       return asyncClient.statObject(args).get();
-    } on InterruptedException catch ( e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    } 
+    // on InterruptedException catch ( e) {
+    //   throw new RuntimeException(e);
+    // } on ExecutionException
+    catch ( e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
     }
@@ -147,14 +151,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    GetObjectResponse getObject(GetObjectArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+       {
     try {
       return asyncClient.getObject(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
       return null;
     }
@@ -185,14 +188,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    void downloadObject(DownloadObjectArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+      {
     try {
       asyncClient.downloadObject(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
     }
   }
@@ -311,14 +313,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    ObjectWriteResponse copyObject(CopyObjectArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+       {
     try {
       return asyncClient.copyObject(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    } catch ( e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
     }
@@ -382,14 +383,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    ObjectWriteResponse composeObject(ComposeObjectArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+      {
     try {
       return asyncClient.composeObject(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    } catch ( e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
     }
@@ -454,9 +454,7 @@ import 'minio_async_client.dart';
    * @throws ServerException
    */
    String getPresignedObjectUrl(GetPresignedObjectUrlArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          XmlParserException, ServerException {
+      {
     return asyncClient.getPresignedObjectUrl(args);
   }
 
@@ -519,9 +517,7 @@ import 'minio_async_client.dart';
    * @see PostPolicy
    */
    Map<String, String> getPresignedPostFormData(PostPolicy policy)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+      {
     return asyncClient.getPresignedPostFormData(policy);
   }
 
@@ -563,14 +559,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    void removeObject(RemoveObjectArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+     {
     try {
       asyncClient.removeObject(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
     }
   }
@@ -635,14 +630,15 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    void restoreObject(RestoreObjectArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+      // throws ErrorResponseException, InsufficientDataException, InternalException,
+      //     InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
+      //     ServerException, XmlParserException {
     try {
       asyncClient.restoreObject(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
     }
   }
@@ -715,15 +711,14 @@ import 'minio_async_client.dart';
    * @throws NoSuchAlgorithmException thrown to indicate missing of MD5 or SHA-256 digest library.
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
-   List<Bucket> listBuckets()
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+   List<Bucket>? listBuckets()
+       {
     try {
       return asyncClient.listBuckets().get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
       return null;
     }
@@ -752,14 +747,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    List<Bucket> listBuckets(ListBucketsArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+      {
     try {
       return asyncClient.listBuckets(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
       return null;
     }
@@ -790,15 +784,14 @@ import 'minio_async_client.dart';
    * @throws NoSuchAlgorithmException thrown to indicate missing of MD5 or SHA-256 digest library.
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
-   boolean bucketExists(BucketExistsArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+   bool bucketExists(BucketExistsArgs args)
+       {
     try {
       return asyncClient.bucketExists(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
       return false;
     }
@@ -842,14 +835,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    void makeBucket(MakeBucketArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+      {
     try {
       asyncClient.makeBucket(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
     }
   }
@@ -2090,14 +2082,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    void setBucketTags(SetBucketTagsArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+       {
     try {
       asyncClient.setBucketTags(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
     }
   }
@@ -2121,14 +2112,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    void deleteBucketTags(DeleteBucketTagsArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+      {
     try {
       asyncClient.deleteBucketTags(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
     }
   }
@@ -2155,14 +2145,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    Tags getObjectTags(GetObjectTagsArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+       {
     try {
       return asyncClient.getObjectTags(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
       return null;
     }
@@ -2195,14 +2184,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    void setObjectTags(SetObjectTagsArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+      {
     try {
       asyncClient.setObjectTags(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
     }
   }
@@ -2227,14 +2215,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    void deleteObjectTags(DeleteObjectTagsArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+       {
     try {
       asyncClient.deleteObjectTags(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+     } catch(e) {
       asyncClient.throwEncapsulatedException(e);
     }
   }
@@ -2274,14 +2261,13 @@ import 'minio_async_client.dart';
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    ObjectWriteResponse uploadSnowballObjects(UploadSnowballObjectsArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+       {
     try {
       return asyncClient.uploadSnowballObjects(args).get();
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
-    } catch (ExecutionException e) {
+    // } catch (InterruptedException e) {
+    //   throw new RuntimeException(e);
+    // } catch (ExecutionException e) {
+    }catch(e){
       asyncClient.throwEncapsulatedException(e);
       return null;
     }
@@ -2300,7 +2286,7 @@ import 'minio_async_client.dart';
    * @param writeTimeout HTTP write timeout in milliseconds.
    * @param readTimeout HTTP read timeout in milliseconds.
    */
-   void setTimeout(long connectTimeout, long writeTimeout, long readTimeout) {
+   void setTimeout(int connectTimeout, int writeTimeout, int readTimeout) {
     asyncClient.setTimeout(connectTimeout, writeTimeout, readTimeout);
   }
 
@@ -2315,7 +2301,7 @@ import 'minio_async_client.dart';
    * @throws NoSuchAlgorithmException thrown to indicate missing of SSL library.
    */
   @SuppressFBWarnings(value = "SIC", justification = "Should not be used in production anyways.")
-   void ignoreCertCheck() throws KeyManagementException, NoSuchAlgorithmException {
+   void ignoreCertCheck()  {
     asyncClient.ignoreCertCheck();
   }
 
@@ -2346,7 +2332,7 @@ import 'minio_async_client.dart';
    * @see #traceOn
    * @throws IOException upon connection error
    */
-   void traceOff() throws IOException {
+   void traceOff()  {
     asyncClient.traceOff();
   }
 

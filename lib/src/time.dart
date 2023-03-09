@@ -23,4 +23,7 @@ class Time {
 
 extension DateTimeX on DateTime {
   String format(DateFormat fm) => fm.format(toUtc());
+
+  static DateTime? parse(String? date, DateFormat fm) =>
+      date == null? null : fm.parse(date, true).toUtc();
 }
