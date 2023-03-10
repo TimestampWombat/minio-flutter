@@ -120,8 +120,7 @@ import 'package:http/http.dart' as http;
    * @see StatObjectResponse
    */
    CompletableFuture<StatObjectResponse> statObject(StatObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     return super.statObjectAsync(args);
   }
 
@@ -150,8 +149,7 @@ import 'package:http/http.dart' as http;
    * @see GetObjectResponse
    */
    CompletableFuture<GetObjectResponse> getObject(GetObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     args.validateSsec(this.baseUrl);
     return executeGetAsync(
@@ -174,7 +172,7 @@ import 'package:http/http.dart' as http;
       bool overwrite,
       StatObjectResponse statObjectResponse,
       GetObjectResponse getObjectResponse)
-      throws IOException {
+{
     OutputStream os = null;
     try {
       Path filePath = Paths.get(filename);
@@ -227,8 +225,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> downloadObject(DownloadObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     String filename = args.filename();
     Path filePath = Paths.get(filename);
     if (!args.overwrite() && Files.exists(filePath)) {
@@ -361,8 +358,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<ObjectWriteResponse> copyObject(CopyObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     args.validateSse(this.baseUrl);
 
@@ -472,8 +468,7 @@ import 'package:http/http.dart' as http;
       int partNumber,
       Multimap<String, String> headers,
       Part[] parts)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     return uploadPartCopyAsync(bucketName, region, objectName, uploadId, partNumber, headers, null)
         .thenApply(
             uploadPartCopyResponse -> {
@@ -537,8 +532,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<ObjectWriteResponse> composeObject(ComposeObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     args.validateSse(this.baseUrl);
     List<ComposeSource> sources = args.sources();
@@ -831,9 +825,7 @@ import 'package:http/http.dart' as http;
    * @throws ServerException
    */
    String getPresignedObjectUrl(GetPresignedObjectUrlArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          XmlParserException, ServerException {
+{
     checkArgs(args);
 
     byte[] body =
@@ -930,9 +922,7 @@ import 'package:http/http.dart' as http;
    * @see PostPolicy
    */
    Map<String, String> getPresignedPostFormData(PostPolicy policy)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+{
     if (provider == null) {
       throw new IllegalArgumentException(
           "Anonymous access does not require presigned post form-data");
@@ -988,8 +978,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> removeObject(RemoveObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeDeleteAsync(
             args,
@@ -1163,8 +1152,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> restoreObject(RestoreObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePostAsync(args, null, newMultimap("restore", ""), args.request())
         .thenAccept(response -> response.close());
@@ -1241,8 +1229,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<List<Bucket>> listBuckets()
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     return listBuckets(ListBucketsArgs.builder().build());
   }
 
@@ -1263,8 +1250,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<List<Bucket>> listBuckets(ListBucketsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     return executeGetAsync(args, null, null)
         .thenApply(
             response -> {
@@ -1298,8 +1284,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<bool> bucketExists(BucketExistsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     return executeHeadAsync(args, null, null)
         .exceptionally(
             e -> {
@@ -1366,8 +1351,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> makeBucket(MakeBucketArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
 
     String region = args.region();
@@ -1423,8 +1407,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setBucketVersioning(SetBucketVersioningArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(args, null, newMultimap("versioning", ""), args.config(), 0)
         .thenAccept(response -> response.close());
@@ -1450,8 +1433,7 @@ import 'package:http/http.dart' as http;
    */
    CompletableFuture<VersioningConfiguration> getBucketVersioning(
       GetBucketVersioningArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeGetAsync(args, null, newMultimap("versioning", ""))
         .thenApply(
@@ -1486,8 +1468,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setObjectLockConfiguration(SetObjectLockConfigurationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(args, null, newMultimap("object-lock", ""), args.config(), 0)
         .thenAccept(response -> response.close());
@@ -1512,8 +1493,7 @@ import 'package:http/http.dart' as http;
    */
    CompletableFuture<Void> deleteObjectLockConfiguration(
       DeleteObjectLockConfigurationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(
             args, null, newMultimap("object-lock", ""), new ObjectLockConfiguration(), 0)
@@ -1540,8 +1520,7 @@ import 'package:http/http.dart' as http;
    */
    CompletableFuture<ObjectLockConfiguration> getObjectLockConfiguration(
       GetObjectLockConfigurationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeGetAsync(args, null, newMultimap("object-lock", ""))
         .thenApply(
@@ -1581,8 +1560,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setObjectRetention(SetObjectRetentionArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("retention", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
@@ -1619,8 +1597,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Retention> getObjectRetention(GetObjectRetentionArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("retention", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
@@ -1682,8 +1659,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> enableObjectLegalHold(EnableObjectLegalHoldArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("legal-hold", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
@@ -1713,8 +1689,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> disableObjectLegalHold(DisableObjectLegalHoldArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("legal-hold", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
@@ -1745,8 +1720,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<bool> isObjectLegalHoldEnabled(IsObjectLegalHoldEnabledArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("legal-hold", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
@@ -1805,8 +1779,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> removeBucket(RemoveBucketArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeDeleteAsync(args, null, null)
         .thenAccept(response -> regionCache.remove(args.bucket()));
@@ -1866,8 +1839,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<ObjectWriteResponse> putObject(PutObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     args.validateSse(this.baseUrl);
     return putObjectAsync(
@@ -1908,8 +1880,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<ObjectWriteResponse> uploadObject(UploadObjectArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     args.validateSse(this.baseUrl);
     final RandomAccessFile file = new RandomAccessFile(args.filename(), "r");
@@ -1965,8 +1936,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<String> getBucketPolicy(GetBucketPolicyArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeGetAsync(args, null, newMultimap("policy", ""))
         .exceptionally(
@@ -2069,8 +2039,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setBucketPolicy(SetBucketPolicyArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(
             args,
@@ -2100,8 +2069,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> deleteBucketPolicy(DeleteBucketPolicyArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeDeleteAsync(args, null, newMultimap("policy", ""))
         .exceptionally(
@@ -2162,8 +2130,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setBucketLifecycle(SetBucketLifecycleArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(args, null, newMultimap("lifecycle", ""), args.config(), 0)
         .thenAccept(response -> response.close());
@@ -2187,8 +2154,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> deleteBucketLifecycle(DeleteBucketLifecycleArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeDeleteAsync(args, null, newMultimap("lifecycle", ""))
         .thenAccept(response -> response.close());
@@ -2214,8 +2180,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<LifecycleConfiguration> getBucketLifecycle(GetBucketLifecycleArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeGetAsync(args, null, newMultimap("lifecycle", ""))
         .exceptionally(
@@ -2273,8 +2238,7 @@ import 'package:http/http.dart' as http;
    */
    CompletableFuture<NotificationConfiguration> getBucketNotification(
       GetBucketNotificationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeGetAsync(args, null, newMultimap("notification", ""))
         .thenApply(
@@ -2323,8 +2287,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setBucketNotification(SetBucketNotificationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(args, null, newMultimap("notification", ""), args.config(), 0)
         .thenAccept(response -> response.close());
@@ -2348,8 +2311,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> deleteBucketNotification(DeleteBucketNotificationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(
             args, null, newMultimap("notification", ""), new NotificationConfiguration(), 0)
@@ -2376,8 +2338,7 @@ import 'package:http/http.dart' as http;
    */
    CompletableFuture<ReplicationConfiguration> getBucketReplication(
       GetBucketReplicationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeGetAsync(args, null, newMultimap("replication", ""))
         .exceptionally(
@@ -2456,8 +2417,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setBucketReplication(SetBucketReplicationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(
             args,
@@ -2488,8 +2448,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> deleteBucketReplication(DeleteBucketReplicationArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeDeleteAsync(args, null, newMultimap("replication", ""))
         .thenAccept(response -> response.close());
@@ -2536,9 +2495,7 @@ import 'package:http/http.dart' as http;
    */
    CloseableIterator<Result<NotificationRecords>> listenBucketNotification(
       ListenBucketNotificationArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+{
     checkArgs(args);
 
     Multimap<String, String> queryParams =
@@ -2605,9 +2562,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    SelectResponseStream selectObjectContent(SelectObjectContentArgs args)
-      throws ErrorResponseException, InsufficientDataException, InternalException,
-          InvalidKeyException, InvalidResponseException, IOException, NoSuchAlgorithmException,
-          ServerException, XmlParserException {
+{
     checkArgs(args);
     args.validateSsec(this.baseUrl);
     Response response = null;
@@ -2651,8 +2606,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setBucketEncryption(SetBucketEncryptionArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(args, null, newMultimap("encryption", ""), args.config(), 0)
         .thenAccept(response -> response.close());
@@ -2677,8 +2631,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<SseConfiguration> getBucketEncryption(GetBucketEncryptionArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeGetAsync(args, null, newMultimap("encryption", ""))
         .exceptionally(
@@ -2734,8 +2687,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> deleteBucketEncryption(DeleteBucketEncryptionArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeDeleteAsync(args, null, newMultimap("encryption", ""))
         .exceptionally(
@@ -2784,8 +2736,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Tags> getBucketTags(GetBucketTagsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeGetAsync(args, null, newMultimap("tagging", ""))
         .exceptionally(
@@ -2841,8 +2792,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setBucketTags(SetBucketTagsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executePutAsync(args, null, newMultimap("tagging", ""), args.tags(), 0)
         .thenAccept(response -> response.close());
@@ -2866,8 +2816,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> deleteBucketTags(DeleteBucketTagsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     return executeDeleteAsync(args, null, newMultimap("tagging", ""))
         .thenAccept(response -> response.close());
@@ -2892,8 +2841,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Tags> getObjectTags(GetObjectTagsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("tagging", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
@@ -2935,8 +2883,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> setObjectTags(SetObjectTagsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("tagging", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
@@ -2962,8 +2909,7 @@ import 'package:http/http.dart' as http;
    * @throws XmlParserException thrown to indicate XML parsing error.
    */
    CompletableFuture<Void> deleteObjectTags(DeleteObjectTagsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("tagging", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
@@ -3004,8 +2950,7 @@ import 'package:http/http.dart' as http;
    */
    CompletableFuture<ObjectWriteResponse> uploadSnowballObjects(
       UploadSnowballObjectsArgs args)
-      throws InsufficientDataException, InternalException, InvalidKeyException, IOException,
-          NoSuchAlgorithmException, XmlParserException {
+{
     checkArgs(args);
 
     return CompletableFuture.supplyAsync(
