@@ -8,6 +8,7 @@ part 'error_response_exception.dart';
 part 'insufficient_data_exception.dart';
 part 'internal_exception.dart';
 part 'invalid_response_exception.dart';
+part 'provider_exception.dart';
 part 'server_exception.dart';
 part 'xml_parser_exception.dart';
 

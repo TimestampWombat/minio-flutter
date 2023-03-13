@@ -25,5 +25,7 @@ extension DateTimeX on DateTime {
   String format(DateFormat fm) => fm.format(toUtc());
 
   static DateTime? parse(String? date, DateFormat fm) =>
-      date == null? null : fm.parse(date, true).toUtc();
+      date == null ? null : fm.parse(date, true).toUtc();
+
+  static DateTime nowUtc() => DateTime.now().toUtc();
 }
