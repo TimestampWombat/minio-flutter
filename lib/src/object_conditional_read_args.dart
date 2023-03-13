@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:minio_flutter/src/time.dart';
 import 'package:quiver/collection.dart';
 
+import 'package:minio_flutter/src/time.dart';
 import 'object_read_args.dart' as ObjectReadArgs;
 import 's3escaper.dart';
 import 'utils/multimapx.dart';

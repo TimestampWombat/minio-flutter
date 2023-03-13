@@ -1,6 +1,7 @@
 library minio_exception;
 
 import 'package:http/http.dart';
+
 import 'package:minio_flutter/src/messages/error_response.dart';
 
 part 'bucket_policy_too_large_exception.dart';
@@ -14,7 +15,7 @@ part 'xml_parser_exception.dart';
 
 class MinioException implements Exception {
   String? message;
-  String? httpTrace;
+  dynamic httpTrace;
 
   /// Constructs a new MinioException.
   MinioException([this.message, this.httpTrace]);

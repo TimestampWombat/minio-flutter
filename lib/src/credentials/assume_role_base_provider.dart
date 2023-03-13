@@ -2,16 +2,16 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:minio_flutter/src/errors/minio_exception.dart';
-import 'package:time/time.dart';
-
-import 'credentials.dart';
-import 'provider.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart' as http;
-import 'http_url.dart' as HttpUrl;
+import 'package:time/time.dart';
 import 'package:xml2json/xml2json.dart';
+
+import 'package:minio_flutter/src/errors/minio_exception.dart';
+import 'package:minio_flutter/src/utils/responsex.dart';
+import 'credentials.dart';
+import 'http_url.dart' as HttpUrl;
+import 'provider.dart';
 
 abstract class AssumeRoleBaseProvider implements Provider {
   static final int DEFAULT_DURATION_SECONDS = 1.hours.inSeconds;
@@ -53,7 +53,7 @@ abstract class AssumeRoleBaseProvider implements Provider {
 
     try {
       http.StreamedResponse response = await httpClient.send(getRequest());
-      if (response.statusCode ~/ 200 != 1) {
+      if (response.notSuccessful()) {
         throw ProviderException(
             "STS service failed with HTTP status code ${response.statusCode}");
       }
@@ -63,12 +63,6 @@ abstract class AssumeRoleBaseProvider implements Provider {
     } catch (e) {
       throw ProviderException("STS service failed with HTTP status code $e");
     }
-  }
-
-  static int getValidDurationSeconds(int? duration) {
-    return (duration != null && duration > DEFAULT_DURATION_SECONDS)
-        ? duration
-        : DEFAULT_DURATION_SECONDS;
   }
 
   HttpUrl.Builder newUrlBuilder(Uri url, String action, int durationSeconds,
@@ -112,4 +106,11 @@ abstract class AssumeRoleBaseProvider implements Provider {
 
 abstract class Response {
   Credentials getCredentials();
+}
+
+int getValidDurationSeconds(int? duration) {
+  return (duration != null &&
+          duration > AssumeRoleBaseProvider.DEFAULT_DURATION_SECONDS)
+      ? duration
+      : AssumeRoleBaseProvider.DEFAULT_DURATION_SECONDS;
 }

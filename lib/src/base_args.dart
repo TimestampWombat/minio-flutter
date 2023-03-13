@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart';
-import 'package:minio_flutter/src/bucket_args.dart';
-import 'package:minio_flutter/src/utils/consumer.dart';
 import 'package:quiver/collection.dart';
 
+import 'package:minio_flutter/src/bucket_args.dart';
+import 'package:minio_flutter/src/utils/consumer.dart';
 import 'utils/multimapx.dart';
 
 /// Base argument class.

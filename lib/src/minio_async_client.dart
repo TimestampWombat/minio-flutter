@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+
 /**
  * Simple Storage Service (aka S3) client to perform bucket and object operations asynchronously.
  *

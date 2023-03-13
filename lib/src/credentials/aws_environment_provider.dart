@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:minio_flutter/src/credentials/credentials.dart';
-
 import 'environment_provider.dart';
 
 class AwsEnvironmentProvider extends EnvironmentProvider {

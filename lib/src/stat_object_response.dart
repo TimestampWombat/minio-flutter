@@ -1,6 +1,6 @@
 import 'package:collection/collection.dart';
-import 'package:minio_flutter/src/messages/response_date.dart';
 
+import 'package:minio_flutter/src/messages/response_date.dart';
 import 'generic_response.dart';
 import 'messages/legal_hold.dart';
 import 'messages/retention_mode.dart';

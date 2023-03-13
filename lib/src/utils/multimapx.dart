@@ -1,5 +1,5 @@
-import 'package:quiver/collection.dart';
 import 'package:collection/collection.dart';
+import 'package:quiver/collection.dart';
 
 extension MultimapX<K, V> on Multimap<K, V> {
   static Multimap<K, V> fromMap<K, V>(Map<K, V> map) {

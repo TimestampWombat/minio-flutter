@@ -1,19 +1,18 @@
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
-import 'package:minio_flutter/src/errors/minio_exception.dart';
 
+import 'package:minio_flutter/src/errors/minio_exception.dart';
 import '../digest.dart';
 import '../time.dart';
-import 'assume_role_base_provider.dart' as AssumeRoleBaseProvider;
-
+import 'assume_role_base_provider.dart';
 import 'credentials.dart';
 import 'http_url.dart' as HttpUrl;
-import 'package:http/http.dart' as http;
 
 part 'assume_role_provider.g.dart';
 
-class AssumeRoleProvider extends AssumeRoleBaseProvider.AssumeRoleBaseProvider {
+class AssumeRoleProvider extends AssumeRoleBaseProvider {
   final String accessKey;
   final String secretKey;
   final String region;
@@ -50,8 +49,7 @@ class AssumeRoleProvider extends AssumeRoleBaseProvider.AssumeRoleBaseProvider {
     HttpUrl.Builder urlBuilder = newUrlBuilder(
         url,
         "AssumeRole",
-        AssumeRoleBaseProvider.AssumeRoleBaseProvider.getValidDurationSeconds(
-            durationSeconds),
+        getValidDurationSeconds(durationSeconds),
         policy,
         roleArn,
         roleSessionName);
@@ -92,7 +90,7 @@ class AssumeRoleProvider extends AssumeRoleBaseProvider.AssumeRoleBaseProvider {
 /// @Root(name = "AssumeRoleResponse", strict = false)
 /// @Namespace(reference = "https://sts.amazonaws.com/doc/2011-06-15/")
 @JsonSerializable(fieldRename: FieldRename.pascal)
-class AssumeRoleResponse implements AssumeRoleBaseProvider.Response {
+class AssumeRoleResponse implements Response {
   // @Path(value = "AssumeRoleResult")
   // @Element(name = "Credentials")
   final Credentials credentials;

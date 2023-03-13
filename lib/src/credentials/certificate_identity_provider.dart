@@ -1,12 +1,10 @@
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
 
-import 'assume_role_base_provider.dart' hide Response;
-import 'assume_role_base_provider.dart' as AssumeRoleBaseProviderP
-    show Response;
+import 'assume_role_base_provider.dart';
 import 'credentials.dart';
-import 'package:http/http.dart' as http;
 import 'http_url.dart' as HttpUrl;
 
 part 'certificate_identity_provider.g.dart';
@@ -25,13 +23,8 @@ class CertificateIdentityProvider extends AssumeRoleBaseProvider {
       throw ArgumentError("STS endpoint scheme must be HTTPS");
     }
 
-    HttpUrl.Builder urlBuilder = newUrlBuilder(
-        url,
-        "AssumeRoleWithCertificate",
-        AssumeRoleBaseProvider.getValidDurationSeconds(durationSeconds),
-        null,
-        null,
-        null);
+    HttpUrl.Builder urlBuilder = newUrlBuilder(url, "AssumeRoleWithCertificate",
+        getValidDurationSeconds(durationSeconds), null, null, null);
     url = urlBuilder.build();
 
     request = http.Request("POST", url);
@@ -53,7 +46,7 @@ class CertificateIdentityProvider extends AssumeRoleBaseProvider {
 // @Root(name = "AssumeRoleWithCertificateResponse", strict = false)
 // @Namespace(reference = "https://sts.amazonaws.com/doc/2011-06-15/")
 @JsonSerializable(fieldRename: FieldRename.pascal)
-class CertificateIdentityResponse implements AssumeRoleBaseProviderP.Response {
+class CertificateIdentityResponse implements Response {
   // @Path(value = "AssumeRoleWithCertificateResult")
   // @Element(name = "Credentials")
   final Credentials credentials;

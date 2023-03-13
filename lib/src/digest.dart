@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart' hide Digest;
 import 'package:crypto/crypto.dart' as crypto show Digest;
+import 'package:crypto/crypto.dart' hide Digest;
+
 import 'package:minio_flutter/src/errors/minio_exception.dart';
 
 class Digest {
