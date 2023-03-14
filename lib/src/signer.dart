@@ -60,7 +60,7 @@ class Signer {
   late String signature;
   late String authorization;
 
-  /// Create new Signer object for V4.
+  /// Create Signer object for V4.
   ///
   /// @param request HTTP Request object.
   /// @param contentSha256 SHA-256 hash of request payload.
@@ -148,7 +148,7 @@ class Signer {
         "AWS4-HMAC-SHA256-PAYLOAD\n${date.format(Time.AMZ_DATE_FORMAT)}\n$scope\n$prevSignature\n${Digest.sha256HashFromString("")}\n$contentSha256";
   }
 
-  void setSigningKey(String serviceName) async{
+  void setSigningKey(String serviceName) async {
     String aws4SecretKey = "AWS4$secretKey";
 
     List<int> dateKey = await sumHmac(aws4SecretKey.codeUnits,
@@ -162,7 +162,7 @@ class Signer {
     signingKey = await sumHmac(dateRegionServiceKey, "aws4_request".codeUnits);
   }
 
-  void setSignature() async{
+  void setSignature() async {
     List<int> digest = await sumHmac(signingKey, stringToSign.codeUnits);
     signature = hex.encode(digest);
   }

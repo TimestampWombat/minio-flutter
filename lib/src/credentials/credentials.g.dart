@@ -10,7 +10,7 @@ Credentials _$CredentialsFromJson(Map<String, dynamic> json) => Credentials(
       json['AccessKeyId'] as String,
       json['SecretAccessKey'] as String,
       json['SessionToken'] as String?,
-      ResponseDate.fromString(json['Expiration'] as String?),
+      ResponseDate.fromJson(json['Expiration'] as String?),
     );
 
 Map<String, dynamic> _$CredentialsToJson(Credentials instance) {

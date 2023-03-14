@@ -4,18 +4,24 @@ part 'error_response.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.pascal)
 class ErrorResponse {
-  ErrorResponse({
-    required this.code,
-  });
-
-  String? code;
-  String? message;
-  String? bucketName;
+  final String? code;
+  final String? message;
+  final String? bucketName;
   @JsonKey(name: 'Key')
-  String? objectName;
-  String? resource;
-  String? requestId;
-  String? hostId;
+  final String? objectName;
+  final String? resource;
+  final String? requestId;
+  final String? hostId;
+
+  ErrorResponse({
+    this.code,
+    this.message,
+    this.bucketName,
+    this.objectName,
+    this.resource,
+    this.requestId,
+    this.hostId,
+  });
 
   factory ErrorResponse.fromJson(Map<String, dynamic> json) =>
       _$ErrorResponseFromJson(json);

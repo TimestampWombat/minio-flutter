@@ -54,7 +54,7 @@ class MinioClientConfigProvider extends EnvironmentProvider {
     try {
       McConfig config =
           McConfig.fromJson(json.decode(File(filename).readAsStringSync()));
-      // mapper.readValue(new InputStreamReader(is, StandardCharsets.UTF_8), McConfig.class);
+      // mapper.readValue(InputStreamReader(is, StandardCharsets.UTF_8), McConfig.class);
       Map<String, String>? values = config.get(alias);
       if (values == null) {
         throw ProviderException(

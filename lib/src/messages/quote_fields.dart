@@ -1,0 +1,4 @@
+enum QuoteFields {
+  ALWAYS,
+  ASNEEDED;
+}

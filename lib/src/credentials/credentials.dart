@@ -19,7 +19,7 @@ class Credentials {
 
   @JsonKey(
       name: "Expiration",
-      fromJson: ResponseDate.fromString,
+      fromJson: ResponseDate.fromJson,
       toJson: ResponseDate.toJson)
   final ResponseDate? expiration;
 

@@ -18,7 +18,7 @@ class ResponseDate {
     return zonedDateTime.format(Time.RESPONSE_DATE_FORMAT);
   }
 
-  static ResponseDate fromString(String? responseDateString) {
+  static ResponseDate fromJson(String? responseDateString) {
     try {
       return ResponseDate(
           DateTimeX.parse(responseDateString, Time.RESPONSE_DATE_FORMAT)!);

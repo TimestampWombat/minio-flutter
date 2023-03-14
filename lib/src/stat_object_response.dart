@@ -34,7 +34,7 @@ class StatObjectResponse extends GenericResponse {
 
     value = headers.value("x-amz-object-lock-retain-until-date");
     retentionRetainUntilDate =
-        (value != null ? ResponseDate.fromString(value).zonedDateTime : null);
+        (value != null ? ResponseDate.fromJson(value).zonedDateTime : null);
 
     legalHold =
         LegalHold.bool("ON" == headers.value("x-amz-object-lock-legal-hold"));

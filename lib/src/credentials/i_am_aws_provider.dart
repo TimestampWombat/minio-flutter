@@ -207,7 +207,7 @@ class EcsCredentials {
   @JsonKey(name: "Token")
   final String sessionToken;
 
-  @JsonKey(fromJson: ResponseDate.fromString, toJson: ResponseDate.toJson)
+  @JsonKey(fromJson: ResponseDate.fromJson, toJson: ResponseDate.toJson)
   final ResponseDate? expiration;
 
   final String? code;

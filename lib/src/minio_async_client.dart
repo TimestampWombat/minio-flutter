@@ -159,7 +159,7 @@ import 'package:http/http.dart' as http;
             (args.versionId() != null) ? newMultimap("versionId", args.versionId()) : null)
         .thenApply(
             response -> {
-              return new GetObjectResponse(
+              return GetObjectResponse(
                   response.headers(),
                   args.bucket(),
                   args.region(),
@@ -184,7 +184,7 @@ import 'package:http/http.dart' as http;
       os = Files.newOutputStream(tempFilePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
       long bytesWritten = ByteStreams.copy(getObjectResponse, os);
       if (bytesWritten != statObjectResponse.size()) {
-        throw new IOException(
+        throw IOException(
             tempFilename
                 + ": unexpected data written.  expected = "
                 + statObjectResponse.size()
@@ -230,18 +230,18 @@ import 'package:http/http.dart' as http;
     String filename = args.filename();
     Path filePath = Paths.get(filename);
     if (!args.overwrite() && Files.exists(filePath)) {
-      throw new IllegalArgumentException("Destination file " + filename + " already exists");
+      throw ArgumentError("Destination file " + filename + " already exists");
     }
 
-    return statObjectAsync(new StatObjectArgs(args))
+    return statObjectAsync(StatObjectArgs(args))
         .thenCombine(
-            getObject(new GetObjectArgs(args)),
+            getObject(GetObjectArgs(args)),
             (statObjectResponse, getObjectResponse) -> {
               try {
                 downloadObject(filename, args.overwrite(), statObjectResponse, getObjectResponse);
                 return null;
               } catch (IOException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenAccept(nullValue -> {});
@@ -369,14 +369,14 @@ import 'package:http/http.dart' as http;
             condition -> {
               if (condition) {
                 try {
-                  return statObjectAsync(new StatObjectArgs((ObjectReadArgs) args.source()));
+                  return statObjectAsync(StatObjectArgs((ObjectReadArgs) args.source()));
                 } catch (InsufficientDataException
                     | InternalException
                     | InvalidKeyException
                     | IOException
                     | NoSuchAlgorithmException
                     | XmlParserException e) {
-                  throw new CompletionException(e);
+                  throw CompletionException(e);
                 }
               }
               return CompletableFuture.completedFuture(null);
@@ -389,25 +389,25 @@ import 'package:http/http.dart' as http;
                   || size > ObjectWriteArgs.MAX_PART_SIZE) {
                 if (args.metadataDirective() != null
                     && args.metadataDirective() == Directive.COPY) {
-                  throw new IllegalArgumentException(
+                  throw ArgumentError(
                       "COPY metadata directive is not applicable to source object size greater than"
                           + " 5 GiB");
                 }
                 if (args.taggingDirective() != null && args.taggingDirective() == Directive.COPY) {
-                  throw new IllegalArgumentException(
+                  throw ArgumentError(
                       "COPY tagging directive is not applicable to source object size greater than"
                           + " 5 GiB");
                 }
 
                 try {
-                  return composeObject(new ComposeObjectArgs(args));
+                  return composeObject(ComposeObjectArgs(args));
                 } catch (InsufficientDataException
                     | InternalException
                     | InvalidKeyException
                     | IOException
                     | NoSuchAlgorithmException
                     | XmlParserException e) {
-                  throw new CompletionException(e);
+                  throw CompletionException(e);
                 }
               }
               return CompletableFuture.completedFuture(null);
@@ -437,7 +437,7 @@ import 'package:http/http.dart' as http;
                           try {
                             CopyObjectResult result =
                                 Xml.unmarshal(CopyObjectResult.class, response.body().charStream());
-                            return new ObjectWriteResponse(
+                            return ObjectWriteResponse(
                                 response.headers(),
                                 args.bucket(),
                                 args.region(),
@@ -445,7 +445,7 @@ import 'package:http/http.dart' as http;
                                 result.etag(),
                                 response.header("x-amz-version-id"));
                           } catch (XmlParserException e) {
-                            throw new CompletionException(e);
+                            throw CompletionException(e);
                           } finally {
                             response.close();
                           }
@@ -456,7 +456,7 @@ import 'package:http/http.dart' as http;
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             });
   }
@@ -473,7 +473,7 @@ import 'package:http/http.dart' as http;
     return uploadPartCopyAsync(bucketName, region, objectName, uploadId, partNumber, headers, null)
         .thenApply(
             uploadPartCopyResponse -> {
-              parts[partNumber - 1] = new Part(partNumber, uploadPartCopyResponse.result().etag());
+              parts[partNumber - 1] = Part(partNumber, uploadPartCopyResponse.result().etag());
               return parts;
             });
   }
@@ -482,7 +482,7 @@ import 'package:http/http.dart' as http;
    * Creates an object by combining data from different source objects using server-side copy.
    *
    * <pre>Example:{@code
-   * List<ComposeSource> sourceObjectList = new ArrayList<ComposeSource>();
+   * List<ComposeSource> sourceObjectList = ArrayList<ComposeSource>();
    *
    * sourceObjectList.add(
    *    ComposeSource.builder().bucket("my-job-bucket").object("my-objectname-part-one").build());
@@ -501,7 +501,7 @@ import 'package:http/http.dart' as http;
    *
    * // Create my-bucketname/my-objectname with user metadata by combining source object
    * // list.
-   * Map<String, String> userMetadata = new HashMap<>();
+   * Map<String, String> userMetadata = HashMap<>();
    * userMetadata.put("My-Project", "Project One");
    * CompletableFuture<ObjectWriteResponse> future = minioAsyncClient.composeObject(
    *     ComposeObjectArgs.builder()
@@ -552,14 +552,14 @@ import 'package:http/http.dart' as http;
             copyObjectFlag -> {
               if (copyObjectFlag) {
                 try {
-                  return copyObject(new CopyObjectArgs(args));
+                  return copyObject(CopyObjectArgs(args));
                 } catch (InsufficientDataException
                     | InternalException
                     | InvalidKeyException
                     | IOException
                     | NoSuchAlgorithmException
                     | XmlParserException e) {
-                  throw new CompletionException(e);
+                  throw CompletionException(e);
                 }
               }
               return CompletableFuture.completedFuture(null);
@@ -592,7 +592,7 @@ import 'package:http/http.dart' as http;
                                 | IOException
                                 | NoSuchAlgorithmException
                                 | XmlParserException e) {
-                              throw new CompletionException(e);
+                              throw CompletionException(e);
                             }
                           })
                       .thenApply(
@@ -613,14 +613,14 @@ import 'package:http/http.dart' as http;
                             CompletableFuture<Part[]> future =
                                 CompletableFuture.supplyAsync(
                                     () -> {
-                                      return new Part[partCount[0]];
+                                      return Part[partCount[0]];
                                     });
                             for (ComposeSource src : sources) {
                               long size = 0;
                               try {
                                 size = src.objectSize();
                               } catch (InternalException e) {
-                                throw new CompletionException(e);
+                                throw CompletionException(e);
                               }
                               if (src.length() != null) {
                                 size = src.length();
@@ -634,7 +634,7 @@ import 'package:http/http.dart' as http;
                               try {
                                 headers = newMultimap(src.headers());
                               } catch (InternalException e) {
-                                throw new CompletionException(e);
+                                throw CompletionException(e);
                               }
                               headers.putAll(ssecHeaders);
 
@@ -669,7 +669,7 @@ import 'package:http/http.dart' as http;
                                               | IOException
                                               | NoSuchAlgorithmException
                                               | XmlParserException e) {
-                                            throw new CompletionException(e);
+                                            throw CompletionException(e);
                                           }
                                         });
                                 continue;
@@ -707,7 +707,7 @@ import 'package:http/http.dart' as http;
                                               | IOException
                                               | NoSuchAlgorithmException
                                               | XmlParserException e) {
-                                            throw new CompletionException(e);
+                                            throw CompletionException(e);
                                           }
                                         });
                                 offset = startBytes;
@@ -734,7 +734,7 @@ import 'package:http/http.dart' as http;
                                 | IOException
                                 | NoSuchAlgorithmException
                                 | XmlParserException e) {
-                              throw new CompletionException(e);
+                              throw CompletionException(e);
                             }
                           });
 
@@ -758,10 +758,10 @@ import 'package:http/http.dart' as http;
                           | XmlParserException
                           | InterruptedException
                           | ExecutionException ex) {
-                        throw new CompletionException(ex);
+                        throw CompletionException(ex);
                       }
                     }
-                    throw new CompletionException(e);
+                    throw CompletionException(e);
                   });
               return completableFuture;
             });
@@ -785,7 +785,7 @@ import 'package:http/http.dart' as http;
    *
    * // Get presigned URL string to upload 'my-objectname' in 'my-bucketname'
    * // with response-content-type as application/json and life time as one day.
-   * Map<String, String> reqParams = new HashMap<String, String>();
+   * Map<String, String> reqParams = HashMap<String, String>();
    * reqParams.put("response-content-type", "application/json");
    *
    * String url =
@@ -839,7 +839,7 @@ import 'package:http/http.dart' as http;
     try {
       region = getRegionAsync(args.bucket(), args.region()).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
     }
@@ -868,8 +868,8 @@ import 'package:http/http.dart' as http;
    * Gets form-data of {@link PostPolicy} of an object to upload its data using POST method.
    *
    * <pre>Example:{@code
-   * // Create new post policy for 'my-bucketname' with 7 days expiry from now.
-   * PostPolicy policy = new PostPolicy("my-bucketname", ZonedDateTime.now().plusDays(7));
+   * // Create post policy for 'my-bucketname' with 7 days expiry from now.
+   * PostPolicy policy = PostPolicy("my-bucketname", ZonedDateTime.now().plusDays(7));
    *
    * // Add condition that 'key' (object name) equals to 'my-objectname'.
    * policy.addEqualsCondition("key", "my-objectname");
@@ -883,7 +883,7 @@ import 'package:http/http.dart' as http;
    * Map<String, String> formData = minioAsyncClient.getPresignedPostFormData(policy);
    *
    * // Upload an image using POST object with form-data.
-   * MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
+   * MultipartBody.Builder multipartBuilder = MultipartBody.Builder();
    * multipartBuilder.setType(MultipartBody.FORM);
    * for (Map.Entry<String, String> entry : formData.entrySet()) {
    *   multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
@@ -893,14 +893,14 @@ import 'package:http/http.dart' as http;
    *
    * // "file" must be added at last.
    * multipartBuilder.addFormDataPart(
-   *     "file", "my-objectname", RequestBody.create(new File("Pictures/avatar.png"), null));
+   *     "file", "my-objectname", RequestBody.create(File("Pictures/avatar.png"), null));
    *
    * Request request =
-   *     new Request.Builder()
+   *     Request.Builder()
    *         .url("https://play.min.io/my-bucketname")
    *         .post(multipartBuilder.build())
    *         .build();
-   * OkHttpClient httpClient = new OkHttpClient().newBuilder().build();
+   * OkHttpClient httpClient = OkHttpClient().newBuilder().build();
    * Response response = httpClient.newCall(request).execute();
    * if (response.isSuccessful()) {
    *   System.out.println("Pictures/avatar.png is uploaded successfully using POST object");
@@ -925,7 +925,7 @@ import 'package:http/http.dart' as http;
    Map<String, String> getPresignedPostFormData(PostPolicy policy)
 {
     if (provider == null) {
-      throw new IllegalArgumentException(
+      throw ArgumentError(
           "Anonymous access does not require presigned post form-data");
     }
 
@@ -933,7 +933,7 @@ import 'package:http/http.dart' as http;
     try {
       region = getRegionAsync(policy.bucket(), null).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
     }
@@ -995,10 +995,10 @@ import 'package:http/http.dart' as http;
    * removal.
    *
    * <pre>Example:{@code
-   * List<DeleteObject> objects = new LinkedList<>();
-   * objects.add(new DeleteObject("my-objectname1"));
-   * objects.add(new DeleteObject("my-objectname2"));
-   * objects.add(new DeleteObject("my-objectname3"));
+   * List<DeleteObject> objects = LinkedList<>();
+   * objects.add(DeleteObject("my-objectname1"));
+   * objects.add(DeleteObject("my-objectname2"));
+   * objects.add(DeleteObject("my-objectname3"));
    * Iterable<Result<DeleteError>> results =
    *     minioAsyncClient.removeObjects(
    *         RemoveObjectsArgs.builder().bucket("my-bucketname").objects(objects).build());
@@ -1015,10 +1015,10 @@ import 'package:http/http.dart' as http;
    Iterable<Result<DeleteError>> removeObjects(RemoveObjectsArgs args) {
     checkArgs(args);
 
-    return new Iterable<Result<DeleteError>>() {
+    return Iterable<Result<DeleteError>>() {
       @Override
        Iterator<Result<DeleteError>> iterator() {
-        return new Iterator<Result<DeleteError>>() {
+        return Iterator<Result<DeleteError>>() {
            Result<DeleteError> error = null;
            Iterator<DeleteError> errorIterator = null;
            bool completed = false;
@@ -1029,7 +1029,7 @@ import 'package:http/http.dart' as http;
             while (errorIterator.hasNext()) {
               DeleteError deleteError = errorIterator.next();
               if (!"NoSuchVersion".equals(deleteError.code())) {
-                error = new Result<>(deleteError);
+                error = Result<>(deleteError);
                 break;
               }
             }
@@ -1041,7 +1041,7 @@ import 'package:http/http.dart' as http;
             }
 
             try {
-              List<DeleteObject> objectList = new LinkedList<>();
+              List<DeleteObject> objectList = LinkedList<>();
               while (objectIter.hasNext() && objectList.size() < 1000) {
                 objectList.add(objectIter.next());
               }
@@ -1061,7 +1061,7 @@ import 'package:http/http.dart' as http;
                             args.extraQueryParams())
                         .get();
               } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                throw RuntimeException(e);
               } catch (ExecutionException e) {
                 throwEncapsulatedException(e);
               }
@@ -1079,7 +1079,7 @@ import 'package:http/http.dart' as http;
                 | NoSuchAlgorithmException
                 | ServerException
                 | XmlParserException e) {
-              error = new Result<>(e);
+              error = Result<>(e);
               completed = true;
             }
           }
@@ -1100,7 +1100,7 @@ import 'package:http/http.dart' as http;
 
           @Override
            Result<DeleteError> next() {
-            if (!hasNext()) throw new NoSuchElementException();
+            if (!hasNext()) throw NoSuchElementException();
 
             if (this.error != null) {
               Result<DeleteError> error = this.error;
@@ -1109,12 +1109,12 @@ import 'package:http/http.dart' as http;
             }
 
             // This never happens.
-            throw new NoSuchElementException();
+            throw NoSuchElementException();
           }
 
           @Override
            void remove() {
-            throw new UnsupportedOperationException();
+            throw UnsupportedOperationException();
           }
         };
       }
@@ -1130,7 +1130,7 @@ import 'package:http/http.dart' as http;
    *     RestoreObjectArgs.builder()
    *         .bucket("my-bucketname")
    *         .object("my-objectname")
-   *         .request(new RestoreRequest(null, null, null, null, null, null))
+   *         .request(RestoreRequest(null, null, null, null, null, null))
    *         .build());
    *
    * // Restore versioned object.
@@ -1139,7 +1139,7 @@ import 'package:http/http.dart' as http;
    *         .bucket("my-bucketname")
    *         .object("my-versioned-objectname")
    *         .versionId("my-versionid")
-   *         .request(new RestoreRequest(null, null, null, null, null, null))
+   *         .request(RestoreRequest(null, null, null, null, null, null))
    *         .build());
    * }</pre>
    *
@@ -1260,7 +1260,7 @@ import 'package:http/http.dart' as http;
                     Xml.unmarshal(ListAllMyBucketsResult.class, response.body().charStream());
                 return result.buckets();
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -1304,7 +1304,7 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             response -> {
@@ -1359,7 +1359,7 @@ import 'package:http/http.dart' as http;
     if (this.region != null && !this.region.isEmpty()) {
       // Error out if region does not match with region passed via constructor.
       if (region != null && !region.equals(this.region)) {
-        throw new IllegalArgumentException(
+        throw ArgumentError(
             "region must be " + this.region + ", but passed " + region);
       }
 
@@ -1381,7 +1381,7 @@ import 'package:http/http.dart' as http;
             location,
             httpHeaders(merge(args.extraHeaders(), headers)),
             args.extraQueryParams(),
-            location.equals(US_EAST_1) ? null : new CreateBucketConfiguration(location),
+            location.equals(US_EAST_1) ? null : CreateBucketConfiguration(location),
             0)
         .thenAccept(
             response -> {
@@ -1442,7 +1442,7 @@ import 'package:http/http.dart' as http;
               try {
                 return Xml.unmarshal(VersioningConfiguration.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -1453,8 +1453,8 @@ import 'package:http/http.dart' as http;
    * Sets default object retention in a bucket.
    *
    * <pre>Example:{@code
-   * ObjectLockConfiguration config = new ObjectLockConfiguration(
-   *     RetentionMode.COMPLIANCE, new RetentionDurationDays(100));
+   * ObjectLockConfiguration config = ObjectLockConfiguration(
+   *     RetentionMode.COMPLIANCE, RetentionDurationDays(100));
    * CompletableFuture<Void> future = minioAsyncClient.setObjectLockConfiguration(
    *     SetObjectLockConfigurationArgs.builder().bucket("my-bucketname").config(config).build());
    * }</pre>
@@ -1497,7 +1497,7 @@ import 'package:http/http.dart' as http;
 {
     checkArgs(args);
     return executePutAsync(
-            args, null, newMultimap("object-lock", ""), new ObjectLockConfiguration(), 0)
+            args, null, newMultimap("object-lock", ""), ObjectLockConfiguration(), 0)
         .thenAccept(response -> response.close());
   }
 
@@ -1529,7 +1529,7 @@ import 'package:http/http.dart' as http;
               try {
                 return Xml.unmarshal(ObjectLockConfiguration.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -1540,7 +1540,7 @@ import 'package:http/http.dart' as http;
    * Sets retention configuration to an object.
    *
    * <pre>Example:{@code
-   *  Retention retention = new Retention(
+   *  Retention retention = Retention(
    *       RetentionMode.COMPLIANCE, ZonedDateTime.now().plusYears(1));
    *  CompletableFuture<Void> future = minioAsyncClient.setObjectRetention(
    *      SetObjectRetentionArgs.builder()
@@ -1623,7 +1623,7 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             response -> {
@@ -1631,7 +1631,7 @@ import 'package:http/http.dart' as http;
               try {
                 return Xml.unmarshal(Retention.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -1664,7 +1664,7 @@ import 'package:http/http.dart' as http;
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("legal-hold", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
-    return executePutAsync(args, null, queryParams, new LegalHold(true), 0)
+    return executePutAsync(args, null, queryParams, LegalHold(true), 0)
         .thenAccept(response -> response.close());
   }
 
@@ -1694,7 +1694,7 @@ import 'package:http/http.dart' as http;
     checkArgs(args);
     Multimap<String, String> queryParams = newMultimap("legal-hold", "");
     if (args.versionId() != null) queryParams.put("versionId", args.versionId());
-    return executePutAsync(args, null, queryParams, new LegalHold(false), 0)
+    return executePutAsync(args, null, queryParams, LegalHold(false), 0)
         .thenAccept(response -> response.close());
   }
 
@@ -1746,7 +1746,7 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             response -> {
@@ -1755,7 +1755,7 @@ import 'package:http/http.dart' as http;
                 LegalHold result = Xml.unmarshal(LegalHold.class, response.body().charStream());
                 return result.status();
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -1807,13 +1807,13 @@ import 'package:http/http.dart' as http;
    * // Create object ends with '/' (also called as folder or directory).
    * CompletableFuture<ObjectWriteResponse> future = minioAsyncClient.putObject(
    *     PutObjectArgs.builder().bucket("my-bucketname").object("path/to/").stream(
-   *             new ByteArrayInputStream(new byte[] {}), 0, -1)
+   *             ByteArrayInputStream(byte[] {}), 0, -1)
    *         .build());
    *
    * // Upload input stream with headers and user metadata.
-   * Map<String, String> headers = new HashMap<>();
+   * Map<String, String> headers = HashMap<>();
    * headers.put("X-Amz-Storage-Class", "REDUCED_REDUNDANCY");
-   * Map<String, String> userMetadata = new HashMap<>();
+   * Map<String, String> userMetadata = HashMap<>();
    * userMetadata.put("My-Project", "Project One");
    * CompletableFuture<ObjectWriteResponse> future = minioAsyncClient.putObject(
    *     PutObjectArgs.builder().bucket("my-bucketname").object("my-objectname").stream(
@@ -1884,7 +1884,7 @@ import 'package:http/http.dart' as http;
 {
     checkArgs(args);
     args.validateSse(this.baseUrl);
-    final RandomAccessFile file = new RandomAccessFile(args.filename(), "r");
+    final RandomAccessFile file = RandomAccessFile(args.filename(), "r");
     return putObjectAsync(
             args, file, args.objectSize(), args.partSize(), args.partCount(), args.contentType())
         .exceptionally(
@@ -1892,7 +1892,7 @@ import 'package:http/http.dart' as http;
               try {
                 file.close();
               } catch (IOException ex) {
-                throw new CompletionException(ex);
+                throw CompletionException(ex);
               }
 
               Throwable ex = e.getCause();
@@ -1905,14 +1905,14 @@ import 'package:http/http.dart' as http;
                 ex = ((ExecutionException) ex).getCause();
               }
 
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             objectWriteResponse -> {
               try {
                 file.close();
               } catch (IOException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
               return objectWriteResponse;
             });
@@ -1960,18 +1960,18 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             response -> {
               if (response == null) return "";
               try {
-                byte[] buf = new byte[MAX_BUCKET_POLICY_SIZE];
+                byte[] buf = byte[MAX_BUCKET_POLICY_SIZE];
                 int bytesRead = 0;
                 bytesRead = response.body().byteStream().read(buf, 0, MAX_BUCKET_POLICY_SIZE);
                 if (bytesRead < 0) {
-                  throw new CompletionException(
-                      new IOException("unexpected EOF when reading bucket policy"));
+                  throw CompletionException(
+                      IOException("unexpected EOF when reading bucket policy"));
                 }
 
                 // Read one byte extra to ensure only MAX_BUCKET_POLICY_SIZE data is sent by the
@@ -1985,15 +1985,15 @@ import 'package:http/http.dart' as http;
                     }
 
                     if (byteRead > 0) {
-                      throw new CompletionException(
-                          new BucketPolicyTooLargeException(args.bucket()));
+                      throw CompletionException(
+                          BucketPolicyTooLargeException(args.bucket()));
                     }
                   }
                 }
 
-                return new String(buf, 0, bytesRead, StandardCharsets.UTF_8);
+                return String(buf, 0, bytesRead, StandardCharsets.UTF_8);
               } catch (IOException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2093,7 +2093,7 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenAccept(
             response -> {
@@ -2105,18 +2105,18 @@ import 'package:http/http.dart' as http;
    * Sets lifecycle configuration to a bucket.
    *
    * <pre>Example:{@code
-   * List<LifecycleRule> rules = new LinkedList<>();
+   * List<LifecycleRule> rules = LinkedList<>();
    * rules.add(
-   *     new LifecycleRule(
+   *     LifecycleRule(
    *         Status.ENABLED,
    *         null,
-   *         new Expiration((ZonedDateTime) null, 365, null),
-   *         new RuleFilter("logs/"),
+   *         Expiration((ZonedDateTime) null, 365, null),
+   *         RuleFilter("logs/"),
    *         "rule2",
    *         null,
    *         null,
    *         null));
-   * LifecycleConfiguration config = new LifecycleConfiguration(rules);
+   * LifecycleConfiguration config = LifecycleConfiguration(rules);
    * CompletableFuture<Void> future = minioAsyncClient.setBucketLifecycle(
    *     SetBucketLifecycleArgs.builder().bucket("my-bucketname").config(config).build());
    * }</pre>
@@ -2204,7 +2204,7 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             response -> {
@@ -2212,7 +2212,7 @@ import 'package:http/http.dart' as http;
               try {
                 return Xml.unmarshal(LifecycleConfiguration.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2247,7 +2247,7 @@ import 'package:http/http.dart' as http;
               try {
                 return Xml.unmarshal(NotificationConfiguration.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2258,20 +2258,20 @@ import 'package:http/http.dart' as http;
    * Sets notification configuration to a bucket.
    *
    * <pre>Example:{@code
-   * List<EventType> eventList = new LinkedList<>();
+   * List<EventType> eventList = LinkedList<>();
    * eventList.add(EventType.OBJECT_CREATED_PUT);
    * eventList.add(EventType.OBJECT_CREATED_COPY);
    *
-   * QueueConfiguration queueConfiguration = new QueueConfiguration();
+   * QueueConfiguration queueConfiguration = QueueConfiguration();
    * queueConfiguration.setQueue("arn:minio:sqs::1:webhook");
    * queueConfiguration.setEvents(eventList);
    * queueConfiguration.setPrefixRule("images");
    * queueConfiguration.setSuffixRule("pg");
    *
-   * List<QueueConfiguration> queueConfigurationList = new LinkedList<>();
+   * List<QueueConfiguration> queueConfigurationList = LinkedList<>();
    * queueConfigurationList.add(queueConfiguration);
    *
-   * NotificationConfiguration config = new NotificationConfiguration();
+   * NotificationConfiguration config = NotificationConfiguration();
    * config.setQueueConfigurationList(queueConfigurationList);
    *
    * CompletableFuture<Void> future = minioAsyncClient.setBucketNotification(
@@ -2315,7 +2315,7 @@ import 'package:http/http.dart' as http;
 {
     checkArgs(args);
     return executePutAsync(
-            args, null, newMultimap("notification", ""), new NotificationConfiguration(), 0)
+            args, null, newMultimap("notification", ""), NotificationConfiguration(), 0)
         .thenAccept(response -> response.close());
   }
 
@@ -2362,7 +2362,7 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             response -> {
@@ -2370,7 +2370,7 @@ import 'package:http/http.dart' as http;
               try {
                 return Xml.unmarshal(ReplicationConfiguration.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2381,28 +2381,28 @@ import 'package:http/http.dart' as http;
    * Sets bucket replication configuration to a bucket.
    *
    * <pre>Example:{@code
-   * Map<String, String> tags = new HashMap<>();
+   * Map<String, String> tags = HashMap<>();
    * tags.put("key1", "value1");
    * tags.put("key2", "value2");
    *
    * ReplicationRule rule =
-   *     new ReplicationRule(
-   *         new DeleteMarkerReplication(Status.DISABLED),
-   *         new ReplicationDestination(
+   *     ReplicationRule(
+   *         DeleteMarkerReplication(Status.DISABLED),
+   *         ReplicationDestination(
    *             null, null, "REPLACE-WITH-ACTUAL-DESTINATION-BUCKET-ARN", null, null, null, null),
    *         null,
-   *         new RuleFilter(new AndOperator("TaxDocs", tags)),
+   *         RuleFilter(AndOperator("TaxDocs", tags)),
    *         "rule1",
    *         null,
    *         1,
    *         null,
    *         Status.ENABLED);
    *
-   * List<ReplicationRule> rules = new LinkedList<>();
+   * List<ReplicationRule> rules = LinkedList<>();
    * rules.add(rule);
    *
    * ReplicationConfiguration config =
-   *     new ReplicationConfiguration("REPLACE-WITH-ACTUAL-ROLE", rules);
+   *     ReplicationConfiguration("REPLACE-WITH-ACTUAL-ROLE", rules);
    *
    * CompletableFuture<Void> future = minioAsyncClient.setBucketReplication(
    *     SetBucketReplicationArgs.builder().bucket("my-bucketname").config(config).build());
@@ -2457,7 +2457,7 @@ import 'package:http/http.dart' as http;
 
   /**
    * Listens events of object prefix and suffix of a bucket. The returned closable iterator is
-   * lazily evaluated hence its required to iterate to get new records and must be used with
+   * lazily evaluated hence its required to iterate to get records and must be used with
    * try-with-resource to release underneath network resources.
    *
    * <pre>Example:{@code
@@ -2509,11 +2509,11 @@ import 'package:http/http.dart' as http;
     try {
       response = executeGetAsync(args, null, queryParams).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
     }
-    NotificationResultRecords result = new NotificationResultRecords(response);
+    NotificationResultRecords result = NotificationResultRecords(response);
     return result.closeableIterator();
   }
 
@@ -2523,10 +2523,10 @@ import 'package:http/http.dart' as http;
    * <pre>Example:{@code
    * String sqlExpression = "select * from S3Object";
    * InputSerialization is =
-   *     new InputSerialization(null, false, null, null, FileHeaderInfo.USE, null, null,
+   *     InputSerialization(null, false, null, null, FileHeaderInfo.USE, null, null,
    *         null);
    * OutputSerialization os =
-   *     new OutputSerialization(null, null, null, QuoteFields.ASNEEDED, null);
+   *     OutputSerialization(null, null, null, QuoteFields.ASNEEDED, null);
    * SelectResponseStream stream =
    *     minioAsyncClient.selectObjectContent(
    *       SelectObjectContentArgs.builder()
@@ -2538,9 +2538,9 @@ import 'package:http/http.dart' as http;
    *       .requestProgress(true)
    *       .build());
    *
-   * byte[] buf = new byte[512];
+   * byte[] buf = byte[512];
    * int bytesRead = stream.read(buf, 0, buf.length);
-   * System.out.println(new String(buf, 0, bytesRead, StandardCharsets.UTF_8));
+   * System.out.println(String(buf, 0, bytesRead, StandardCharsets.UTF_8));
    *
    * Stats stats = stream.stats();
    * System.out.println("bytes scanned: " + stats.bytesScanned());
@@ -2573,7 +2573,7 @@ import 'package:http/http.dart' as http;
                   args,
                   (args.ssec() != null) ? newMultimap(args.ssec().headers()) : null,
                   newMultimap("select", "", "select-type", "2"),
-                  new SelectObjectContentRequest(
+                  SelectObjectContentRequest(
                       args.sqlExpression(),
                       args.requestProgress(),
                       args.inputSerialization(),
@@ -2582,11 +2582,11 @@ import 'package:http/http.dart' as http;
                       args.scanEndRange()))
               .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
     }
-    return new SelectResponseStream(response.body().byteStream());
+    return SelectResponseStream(response.body().byteStream());
   }
 
   /**
@@ -2655,15 +2655,15 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             response -> {
-              if (response == null) return new SseConfiguration(null);
+              if (response == null) return SseConfiguration(null);
               try {
                 return Xml.unmarshal(SseConfiguration.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2711,7 +2711,7 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenAccept(
             response -> {
@@ -2757,15 +2757,15 @@ import 'package:http/http.dart' as http;
                   return null;
                 }
               }
-              throw new CompletionException(ex);
+              throw CompletionException(ex);
             })
         .thenApply(
             response -> {
-              if (response == null) return new Tags();
+              if (response == null) return Tags();
               try {
                 return Xml.unmarshal(Tags.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2776,7 +2776,7 @@ import 'package:http/http.dart' as http;
    * Sets tags to a bucket.
    *
    * <pre>Example:{@code
-   * Map<String, String> map = new HashMap<>();
+   * Map<String, String> map = HashMap<>();
    * map.put("Project", "Project One");
    * map.put("User", "jsmith");
    * CompletableFuture<Void> future = minioAsyncClient.setBucketTags(
@@ -2852,7 +2852,7 @@ import 'package:http/http.dart' as http;
               try {
                 return Xml.unmarshal(Tags.class, response.body().charStream());
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2863,7 +2863,7 @@ import 'package:http/http.dart' as http;
    * Sets tags to an object.
    *
    * <pre>Example:{@code
-   * Map<String, String> map = new HashMap<>();
+   * Map<String, String> map = HashMap<>();
    * map.put("Project", "Project One");
    * map.put("User", "jsmith");
    * CompletableFuture<Void> future = minioAsyncClient.setObjectTags(
@@ -2923,17 +2923,17 @@ import 'package:http/http.dart' as http;
    *
    * <pre>Example:{@code
    * // Upload snowball objects.
-   * List<SnowballObject> objects = new ArrayList<SnowballObject>();
+   * List<SnowballObject> objects = ArrayList<SnowballObject>();
    * objects.add(
-   *     new SnowballObject(
+   *     SnowballObject(
    *         "my-object-one",
-   *         new ByteArrayInputStream("hello".getBytes(StandardCharsets.UTF_8)),
+   *         ByteArrayInputStream("hello".getBytes(StandardCharsets.UTF_8)),
    *         5,
    *         null));
    * objects.add(
-   *     new SnowballObject(
+   *     SnowballObject(
    *         "my-object-two",
-   *         new ByteArrayInputStream("java".getBytes(StandardCharsets.UTF_8)),
+   *         ByteArrayInputStream("java".getBytes(StandardCharsets.UTF_8)),
    *         4,
    *         null));
    * CompletableFuture<ObjectWriteResponse> future = minioAsyncClient.uploadSnowballObjects(
@@ -2965,29 +2965,29 @@ import 'package:http/http.dart' as http;
               try {
                 OutputStream os = null;
                 if (args.stagingFilename() != null) {
-                  fos = new FileOutputStream(args.stagingFilename());
-                  bos = new BufferedOutputStream(fos);
+                  fos = FileOutputStream(args.stagingFilename());
+                  bos = BufferedOutputStream(fos);
                   os = bos;
                 } else {
-                  baos = new ByteArrayOutputStream();
+                  baos = ByteArrayOutputStream();
                   os = baos;
                 }
 
                 if (args.compression()) {
-                  sos = new SnappyFramedOutputStream(os);
+                  sos = SnappyFramedOutputStream(os);
                   os = sos;
                 }
 
-                tarOutputStream = new TarArchiveOutputStream(os);
+                tarOutputStream = TarArchiveOutputStream(os);
                 tarOutputStream.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
                 for (SnowballObject object : args.objects()) {
                   if (object.filename() != null) {
                     Path filePath = Paths.get(object.filename());
-                    TarArchiveEntry entry = new TarArchiveEntry(filePath.toFile(), object.name());
+                    TarArchiveEntry entry = TarArchiveEntry(filePath.toFile(), object.name());
                     tarOutputStream.putArchiveEntry(entry);
                     Files.copy(filePath, tarOutputStream);
                   } else {
-                    TarArchiveEntry entry = new TarArchiveEntry(object.name());
+                    TarArchiveEntry entry = TarArchiveEntry(object.name());
                     if (object.modificationTime() != null) {
                       entry.setModTime(Date.from(object.modificationTime().toInstant()));
                     }
@@ -2999,7 +2999,7 @@ import 'package:http/http.dart' as http;
                 }
                 tarOutputStream.finish();
               } catch (IOException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 try {
                   if (tarOutputStream != null) tarOutputStream.flush();
@@ -3011,7 +3011,7 @@ import 'package:http/http.dart' as http;
                   if (bos != null) bos.close();
                   if (fos != null) fos.close();
                 } catch (IOException e) {
-                  throw new CompletionException(e);
+                  throw CompletionException(e);
                 }
               }
               return baos;
@@ -3039,16 +3039,16 @@ import 'package:http/http.dart' as http;
                     | IOException
                     | NoSuchAlgorithmException
                     | XmlParserException e) {
-                  throw new CompletionException(e);
+                  throw CompletionException(e);
                 }
               }
 
               long length = Paths.get(args.stagingFilename()).toFile().length();
               if (length > ObjectWriteArgs.MAX_OBJECT_SIZE) {
-                throw new IllegalArgumentException(
+                throw ArgumentError(
                     "tarball size " + length + " is more than maximum allowed 5TiB");
               }
-              try (RandomAccessFile file = new RandomAccessFile(args.stagingFilename(), "r")) {
+              try (RandomAccessFile file = RandomAccessFile(args.stagingFilename(), "r")) {
                 return putObjectAsync(
                     args.bucket(),
                     args.region(),
@@ -3063,13 +3063,13 @@ import 'package:http/http.dart' as http;
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             });
   }
 
    static Builder builder() {
-    return new Builder();
+    return Builder();
   }
 
   /** Argument builder of {@link MinioClient}. */
@@ -3166,7 +3166,7 @@ import 'package:http/http.dart' as http;
      Builder endpoint(String endpoint, int port, bool secure) {
       HttpUrl url = HttpUtils.getBaseUrl(endpoint);
       if (port < 1 || port > 65535) {
-        throw new IllegalArgumentException("port must be in range of 1 to 65535");
+        throw ArgumentError("port must be in range of 1 to 65535");
       }
       url = url.newBuilder().port(port).scheme(secure ? "https" : "http").build();
 
@@ -3194,7 +3194,7 @@ import 'package:http/http.dart' as http;
     }
 
      Builder credentials(String accessKey, String secretKey) {
-      this.provider = new StaticProvider(accessKey, secretKey, null);
+      this.provider = StaticProvider(accessKey, secretKey, null);
       return this;
     }
 
@@ -3212,7 +3212,7 @@ import 'package:http/http.dart' as http;
      MinioAsyncClient build() {
       HttpUtils.validateNotNull(this.baseUrl, "endpoint");
       if (this.isAwsChinaHost && this.regionInUrl == null && this.region == null) {
-        throw new IllegalArgumentException(
+        throw ArgumentError(
             "Region missing in Amazon S3 China endpoint " + this.baseUrl);
       }
 
@@ -3223,7 +3223,7 @@ import 'package:http/http.dart' as http;
         if (this.region == null) this.region = regionInUrl;
       }
 
-      return new MinioAsyncClient(
+      return MinioAsyncClient(
           baseUrl,
           region,
           isAwsHost,

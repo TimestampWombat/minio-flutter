@@ -71,17 +71,17 @@ class AwsConfigProvider extends EnvironmentProvider {
 // }
 
 //     class Ini {
-//      Map<String, Properties> result = new HashMap<>();
+//      Map<String, Properties> result = HashMap<>();
 
 //      Map<String, Properties> unmarshal(Reader reader) throws IOException {
-//       new Properties() {
+//       Properties() {
 //          Properties section;
 
 //         @Override
 //          Object put(Object key, Object value) {
 //           String header = (((String) key) + " " + value).trim();
 //           if (header.startsWith("[") && header.endsWith("]")) {
-//             section = new Properties();
+//             section = Properties();
 //             return result.put(header.substring(1, header.length() - 1), section);
 //           }
 //           return section.put(key, value);

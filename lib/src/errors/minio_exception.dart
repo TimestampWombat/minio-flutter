@@ -18,7 +18,7 @@ class MinioException implements Exception {
   String? message;
   dynamic httpTrace;
 
-  /// Constructs a new MinioException.
+  /// Constructs a MinioException.
   MinioException([this.message, this.httpTrace]);
 
   @override

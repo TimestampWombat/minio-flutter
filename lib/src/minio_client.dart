@@ -108,7 +108,7 @@ import 'stat_object_response.dart';
       return asyncClient.statObject(args).get();
     } 
     // on InterruptedException catch ( e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } on ExecutionException
     catch ( e) {
       asyncClient.throwEncapsulatedException(e);
@@ -149,7 +149,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getObject(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -184,7 +184,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.downloadObject(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -307,7 +307,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.copyObject(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     } catch ( e) {
       asyncClient.throwEncapsulatedException(e);
@@ -318,7 +318,7 @@ import 'stat_object_response.dart';
   /// Creates an object by combining data from different source objects using server-side copy.
   ///
   /// <pre>Example:{@code
-  /// List<ComposeSource> sourceObjectList = new ArrayList<ComposeSource>();
+  /// List<ComposeSource> sourceObjectList = ArrayList<ComposeSource>();
   ///
   /// sourceObjectList.add(
   ///    ComposeSource.builder().bucket("my-job-bucket").object("my-objectname-part-one").build());
@@ -337,7 +337,7 @@ import 'stat_object_response.dart';
   ///
   /// // Create my-bucketname/my-objectname with user metadata by combining source object
   /// // list.
-  /// Map<String, String> userMetadata = new HashMap<>();
+  /// Map<String, String> userMetadata = HashMap<>();
   /// userMetadata.put("My-Project", "Project One");
   /// minioClient.composeObject(
   ///     ComposeObjectArgs.builder()
@@ -375,7 +375,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.composeObject(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     } catch ( e) {
       asyncClient.throwEncapsulatedException(e);
@@ -400,7 +400,7 @@ import 'stat_object_response.dart';
   ///
   /// // Get presigned URL string to upload 'my-objectname' in 'my-bucketname'
   /// // with response-content-type as application/json and life time as one day.
-  /// Map<String, String> reqParams = new HashMap<String, String>();
+  /// Map<String, String> reqParams = HashMap<String, String>();
   /// reqParams.put("response-content-type", "application/json");
   ///
   /// String url =
@@ -447,8 +447,8 @@ import 'stat_object_response.dart';
   /// Gets form-data of {@link PostPolicy} of an object to upload its data using POST method.
   ///
   /// <pre>Example:{@code
-  /// // Create new post policy for 'my-bucketname' with 7 days expiry from now.
-  /// PostPolicy policy = new PostPolicy("my-bucketname", ZonedDateTime.now().plusDays(7));
+  /// // Create post policy for 'my-bucketname' with 7 days expiry from now.
+  /// PostPolicy policy = PostPolicy("my-bucketname", ZonedDateTime.now().plusDays(7));
   ///
   /// // Add condition that 'key' (object name) equals to 'my-objectname'.
   /// policy.addEqualsCondition("key", "my-objectname");
@@ -462,7 +462,7 @@ import 'stat_object_response.dart';
   /// Map<String, String> formData = minioClient.getPresignedPostFormData(policy);
   ///
   /// // Upload an image using POST object with form-data.
-  /// MultipartBody.Builder multipartBuilder = new MultipartBody.Builder();
+  /// MultipartBody.Builder multipartBuilder = MultipartBody.Builder();
   /// multipartBuilder.setType(MultipartBody.FORM);
   /// for (Map.Entry<String, String> entry : formData.entrySet()) {
   ///   multipartBuilder.addFormDataPart(entry.getKey(), entry.getValue());
@@ -472,14 +472,14 @@ import 'stat_object_response.dart';
   ///
   /// // "file" must be added at last.
   /// multipartBuilder.addFormDataPart(
-  ///     "file", "my-objectname", RequestBody.create(new File("Pictures/avatar.png"), null));
+  ///     "file", "my-objectname", RequestBody.create(File("Pictures/avatar.png"), null));
   ///
   /// Request request =
-  ///     new Request.Builder()
+  ///     Request.Builder()
   ///         .url("https://play.min.io/my-bucketname")
   ///         .post(multipartBuilder.build())
   ///         .build();
-  /// OkHttpClient httpClient = new OkHttpClient().newBuilder().build();
+  /// OkHttpClient httpClient = OkHttpClient().newBuilder().build();
   /// Response response = httpClient.newCall(request).execute();
   /// if (response.isSuccessful()) {
   ///   System.out.println("Pictures/avatar.png is uploaded successfully using POST object");
@@ -545,7 +545,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.removeObject(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -556,10 +556,10 @@ import 'stat_object_response.dart';
   /// removal.
   ///
   /// <pre>Example:{@code
-  /// List<DeleteObject> objects = new LinkedList<>();
-  /// objects.add(new DeleteObject("my-objectname1"));
-  /// objects.add(new DeleteObject("my-objectname2"));
-  /// objects.add(new DeleteObject("my-objectname3"));
+  /// List<DeleteObject> objects = LinkedList<>();
+  /// objects.add(DeleteObject("my-objectname1"));
+  /// objects.add(DeleteObject("my-objectname2"));
+  /// objects.add(DeleteObject("my-objectname3"));
   /// Iterable<Result<DeleteError>> results =
   ///     minioClient.removeObjects(
   ///         RemoveObjectsArgs.builder().bucket("my-bucketname").objects(objects).build());
@@ -584,7 +584,7 @@ import 'stat_object_response.dart';
   ///     RestoreObjectArgs.builder()
   ///         .bucket("my-bucketname")
   ///         .object("my-objectname")
-  ///         .request(new RestoreRequest(null, null, null, null, null, null))
+  ///         .request(RestoreRequest(null, null, null, null, null, null))
   ///         .build());
   ///
   /// // Restore versioned object.
@@ -593,7 +593,7 @@ import 'stat_object_response.dart';
   ///         .bucket("my-bucketname")
   ///         .object("my-versioned-objectname")
   ///         .versionId("my-versionid")
-  ///         .request(new RestoreRequest(null, null, null, null, null, null))
+  ///         .request(RestoreRequest(null, null, null, null, null, null))
   ///         .build());
   /// }</pre>
   ///
@@ -614,7 +614,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.restoreObject(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -690,7 +690,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.listBuckets().get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -723,7 +723,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.listBuckets(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -759,7 +759,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.bucketExists(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -807,7 +807,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.makeBucket(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -836,7 +836,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setBucketVersioning(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -866,7 +866,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getBucketVersioning(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -876,8 +876,8 @@ import 'stat_object_response.dart';
   /// Sets default object retention in a bucket.
   ///
   /// <pre>Example:{@code
-  /// ObjectLockConfiguration config = new ObjectLockConfiguration(
-  ///     RetentionMode.COMPLIANCE, new RetentionDurationDays(100));
+  /// ObjectLockConfiguration config = ObjectLockConfiguration(
+  ///     RetentionMode.COMPLIANCE, RetentionDurationDays(100));
   /// minioClient.setObjectLockConfiguration(
   ///     SetObjectLockConfigurationArgs.builder().bucket("my-bucketname").config(config).build());
   /// }</pre>
@@ -897,7 +897,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setObjectLockConfiguration(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -925,7 +925,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.deleteObjectLockConfiguration(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -958,7 +958,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getObjectLockConfiguration(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -968,7 +968,7 @@ import 'stat_object_response.dart';
   /// Sets retention configuration to an object.
   ///
   /// <pre>Example:{@code
-  ///  Retention retention = new Retention(
+  ///  Retention retention = Retention(
   ///       RetentionMode.COMPLIANCE, ZonedDateTime.now().plusYears(1));
   ///  minioClient.setObjectRetention(
   ///      SetObjectRetentionArgs.builder()
@@ -994,7 +994,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setObjectRetention(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1029,7 +1029,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getObjectRetention(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -1062,7 +1062,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.enableObjectLegalHold(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1094,7 +1094,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.disableObjectLegalHold(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1134,7 +1134,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.isObjectLegalHoldEnabled(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return false;
@@ -1162,7 +1162,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.removeBucket(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1188,13 +1188,13 @@ import 'stat_object_response.dart';
   /// // Create object ends with '/' (also called as folder or directory).
   /// minioClient.putObject(
   ///     PutObjectArgs.builder().bucket("my-bucketname").object("path/to/").stream(
-  ///             new ByteArrayInputStream(new byte[] {}), 0, -1)
+  ///             ByteArrayInputStream(byte[] {}), 0, -1)
   ///         .build());
   ///
   /// // Upload input stream with headers and user metadata.
-  /// Map<String, String> headers = new HashMap<>();
+  /// Map<String, String> headers = HashMap<>();
   /// headers.put("X-Amz-Storage-Class", "REDUCED_REDUNDANCY");
-  /// Map<String, String> userMetadata = new HashMap<>();
+  /// Map<String, String> userMetadata = HashMap<>();
   /// userMetadata.put("My-Project", "Project One");
   /// minioClient.putObject(
   ///     PutObjectArgs.builder().bucket("my-bucketname").object("my-objectname").stream(
@@ -1227,7 +1227,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.putObject(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -1268,7 +1268,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.uploadObject(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -1299,7 +1299,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getBucketPolicy(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return "";
@@ -1350,7 +1350,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setBucketPolicy(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1377,7 +1377,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.deleteBucketPolicy(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1386,18 +1386,18 @@ import 'stat_object_response.dart';
   /// Sets lifecycle configuration to a bucket.
   ///
   /// <pre>Example:{@code
-  /// List<LifecycleRule> rules = new LinkedList<>();
+  /// List<LifecycleRule> rules = LinkedList<>();
   /// rules.add(
-  ///     new LifecycleRule(
+  ///     LifecycleRule(
   ///         Status.ENABLED,
   ///         null,
-  ///         new Expiration((ZonedDateTime) null, 365, null),
-  ///         new RuleFilter("logs/"),
+  ///         Expiration((ZonedDateTime) null, 365, null),
+  ///         RuleFilter("logs/"),
   ///         "rule2",
   ///         null,
   ///         null,
   ///         null));
-  /// LifecycleConfiguration config = new LifecycleConfiguration(rules);
+  /// LifecycleConfiguration config = LifecycleConfiguration(rules);
   /// minioClient.setBucketLifecycle(
   ///     SetBucketLifecycleArgs.builder().bucket("my-bucketname").config(config).build());
   /// }</pre>
@@ -1417,7 +1417,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setBucketLifecycle(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1444,7 +1444,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.deleteBucketLifecycle(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1475,7 +1475,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getBucketLifecycle(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -1506,7 +1506,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getBucketNotification(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -1516,20 +1516,20 @@ import 'stat_object_response.dart';
   /// Sets notification configuration to a bucket.
   ///
   /// <pre>Example:{@code
-  /// List<EventType> eventList = new LinkedList<>();
+  /// List<EventType> eventList = LinkedList<>();
   /// eventList.add(EventType.OBJECT_CREATED_PUT);
   /// eventList.add(EventType.OBJECT_CREATED_COPY);
   ///
-  /// QueueConfiguration queueConfiguration = new QueueConfiguration();
+  /// QueueConfiguration queueConfiguration = QueueConfiguration();
   /// queueConfiguration.setQueue("arn:minio:sqs::1:webhook");
   /// queueConfiguration.setEvents(eventList);
   /// queueConfiguration.setPrefixRule("images");
   /// queueConfiguration.setSuffixRule("pg");
   ///
-  /// List<QueueConfiguration> queueConfigurationList = new LinkedList<>();
+  /// List<QueueConfiguration> queueConfigurationList = LinkedList<>();
   /// queueConfigurationList.add(queueConfiguration);
   ///
-  /// NotificationConfiguration config = new NotificationConfiguration();
+  /// NotificationConfiguration config = NotificationConfiguration();
   /// config.setQueueConfigurationList(queueConfigurationList);
   ///
   /// minioClient.setBucketNotification(
@@ -1551,7 +1551,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setBucketNotification(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1579,7 +1579,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.deleteBucketNotification(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1609,7 +1609,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getBucketReplication(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -1619,28 +1619,28 @@ import 'stat_object_response.dart';
   /// Sets bucket replication configuration to a bucket.
   ///
   /// <pre>Example:{@code
-  /// Map<String, String> tags = new HashMap<>();
+  /// Map<String, String> tags = HashMap<>();
   /// tags.put("key1", "value1");
   /// tags.put("key2", "value2");
   ///
   /// ReplicationRule rule =
-  ///     new ReplicationRule(
-  ///         new DeleteMarkerReplication(Status.DISABLED),
-  ///         new ReplicationDestination(
+  ///     ReplicationRule(
+  ///         DeleteMarkerReplication(Status.DISABLED),
+  ///         ReplicationDestination(
   ///             null, null, "REPLACE-WITH-ACTUAL-DESTINATION-BUCKET-ARN", null, null, null, null),
   ///         null,
-  ///         new RuleFilter(new AndOperator("TaxDocs", tags)),
+  ///         RuleFilter(AndOperator("TaxDocs", tags)),
   ///         "rule1",
   ///         null,
   ///         1,
   ///         null,
   ///         Status.ENABLED);
   ///
-  /// List<ReplicationRule> rules = new LinkedList<>();
+  /// List<ReplicationRule> rules = LinkedList<>();
   /// rules.add(rule);
   ///
   /// ReplicationConfiguration config =
-  ///     new ReplicationConfiguration("REPLACE-WITH-ACTUAL-ROLE", rules);
+  ///     ReplicationConfiguration("REPLACE-WITH-ACTUAL-ROLE", rules);
   ///
   /// minioClient.setBucketReplication(
   ///     SetBucketReplicationArgs.builder().bucket("my-bucketname").config(config).build());
@@ -1661,7 +1661,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setBucketReplication(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1689,14 +1689,14 @@ import 'stat_object_response.dart';
     try {
       asyncClient.deleteBucketReplication(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
   }
 
   /// Listens events of object prefix and suffix of a bucket. The returned closable iterator is
-  /// lazily evaluated hence its required to iterate to get new records and must be used with
+  /// lazily evaluated hence its required to iterate to get records and must be used with
   /// try-with-resource to release underneath network resources.
   ///
   /// <pre>Example:{@code
@@ -1743,10 +1743,10 @@ import 'stat_object_response.dart';
   /// <pre>Example:{@code
   /// String sqlExpression = "select * from S3Object";
   /// InputSerialization is =
-  ///     new InputSerialization(null, false, null, null, FileHeaderInfo.USE, null, null,
+  ///     InputSerialization(null, false, null, null, FileHeaderInfo.USE, null, null,
   ///         null);
   /// OutputSerialization os =
-  ///     new OutputSerialization(null, null, null, QuoteFields.ASNEEDED, null);
+  ///     OutputSerialization(null, null, null, QuoteFields.ASNEEDED, null);
   /// SelectResponseStream stream =
   ///     minioClient.selectObjectContent(
   ///       SelectObjectContentArgs.builder()
@@ -1758,9 +1758,9 @@ import 'stat_object_response.dart';
   ///       .requestProgress(true)
   ///       .build());
   ///
-  /// byte[] buf = new byte[512];
+  /// byte[] buf = byte[512];
   /// int bytesRead = stream.read(buf, 0, buf.length);
-  /// System.out.println(new String(buf, 0, bytesRead, StandardCharsets.UTF_8));
+  /// System.out.println(String(buf, 0, bytesRead, StandardCharsets.UTF_8));
   ///
   /// Stats stats = stream.stats();
   /// System.out.println("bytes scanned: " + stats.bytesScanned());
@@ -1808,7 +1808,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setBucketEncryption(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1838,7 +1838,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getBucketEncryption(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -1867,7 +1867,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.deleteBucketEncryption(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
     }
@@ -1896,7 +1896,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getBucketTags(args).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       asyncClient.throwEncapsulatedException(e);
       return null;
@@ -1906,7 +1906,7 @@ import 'stat_object_response.dart';
   /// Sets tags to a bucket.
   ///
   /// <pre>Example:{@code
-  /// Map<String, String> map = new HashMap<>();
+  /// Map<String, String> map = HashMap<>();
   /// map.put("Project", "Project One");
   /// map.put("User", "jsmith");
   /// minioClient.setBucketTags(
@@ -1928,7 +1928,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setBucketTags(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -1956,7 +1956,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.deleteBucketTags(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -1987,7 +1987,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.getObjectTags(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -1998,7 +1998,7 @@ import 'stat_object_response.dart';
   /// Sets tags to an object.
   ///
   /// <pre>Example:{@code
-  /// Map<String, String> map = new HashMap<>();
+  /// Map<String, String> map = HashMap<>();
   /// map.put("Project", "Project One");
   /// map.put("User", "jsmith");
   /// minioClient.setObjectTags(
@@ -2024,7 +2024,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.setObjectTags(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -2053,7 +2053,7 @@ import 'stat_object_response.dart';
     try {
       asyncClient.deleteObjectTags(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
      } catch(e) {
       asyncClient.throwEncapsulatedException(e);
@@ -2065,17 +2065,17 @@ import 'stat_object_response.dart';
   ///
   /// <pre>Example:{@code
   /// // Upload snowball objects.
-  /// List<SnowballObject> objects = new ArrayList<SnowballObject>();
+  /// List<SnowballObject> objects = ArrayList<SnowballObject>();
   /// objects.add(
-  ///     new SnowballObject(
+  ///     SnowballObject(
   ///         "my-object-one",
-  ///         new ByteArrayInputStream("hello".getBytes(StandardCharsets.UTF_8)),
+  ///         ByteArrayInputStream("hello".getBytes(StandardCharsets.UTF_8)),
   ///         5,
   ///         null));
   /// objects.add(
-  ///     new SnowballObject(
+  ///     SnowballObject(
   ///         "my-object-two",
-  ///         new ByteArrayInputStream("java".getBytes(StandardCharsets.UTF_8)),
+  ///         ByteArrayInputStream("java".getBytes(StandardCharsets.UTF_8)),
   ///         4,
   ///         null));
   /// minioClient.uploadSnowballObjects(
@@ -2097,7 +2097,7 @@ import 'stat_object_response.dart';
     try {
       return asyncClient.uploadSnowballObjects(args).get();
     // } catch (InterruptedException e) {
-    //   throw new RuntimeException(e);
+    //   throw RuntimeException(e);
     // } catch (ExecutionException e) {
     }catch(e){
       asyncClient.throwEncapsulatedException(e);
@@ -2189,7 +2189,7 @@ import 'stat_object_response.dart';
   }
 
    static Builder builder() {
-    return new Builder();
+    return Builder();
   }
 
   /** Argument builder of {@link MinioClient}. */
@@ -2242,7 +2242,7 @@ import 'stat_object_response.dart';
 
      MinioClient build() {
       MinioAsyncClient asyncClient = asyncClientBuilder.build();
-      return new MinioClient(asyncClient);
+      return MinioClient(asyncClient);
     }
   }
 }

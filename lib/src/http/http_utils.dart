@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart' as http;
 import 'package:time/time.dart';
-import 'package:http/http.dart' as http;
-import 'package:minio_flutter/src/utils/internet_address.dart';
 
+import 'package:minio_flutter/src/utils/internet_address.dart';
 import '../errors/minio_exception.dart';
 
 /// HTTP utilities.

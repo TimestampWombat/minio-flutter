@@ -2,9 +2,9 @@
  abstract class S3Base {
   // static {
   //   try {
-  //     RequestBody.create(new byte[] {}, null);
+  //     RequestBody.create(byte[] {}, null);
   //   } catch (NoSuchMethodError ex) {
-  //     throw new RuntimeException("Unsupported OkHttp library found. Must use okhttp >= 4.8.1", ex);
+  //     throw RuntimeException("Unsupported OkHttp library found. Must use okhttp >= 4.8.1", ex);
   //   }
   // }
 
@@ -18,7 +18,7 @@
   // maximum allowed bucket policy size is 20KiB
    static final int MAX_BUCKET_POLICY_SIZE = 20 * 1024;
    static final String US_EAST_1 = "us-east-1";
-   final Map<String, String> regionCache = new ConcurrentHashMap<>();
+   final Map<String, String> regionCache = ConcurrentHashMap<>();
 
    static final String RETRY_HEAD = "RetryHead";
    static final String END_HTTP = "----------END-HTTP----------";
@@ -74,7 +74,7 @@
 
   /** Check whether argument is valid or not. */
    void checkArgs(BaseArgs args) {
-    if (args == null) throw new IllegalArgumentException("null arguments");
+    if (args == null) throw ArgumentError("null arguments");
   }
 
   /** Merge two Multimaps. */
@@ -86,10 +86,10 @@
     return map;
   }
 
-  /** Create new HashMultimap by alternating keys and values. */
+  /** Create HashMultimap by alternating keys and values. */
    Multimap<String, String> newMultimap(String... keysAndValues) {
     if (keysAndValues.length % 2 != 0) {
-      throw new IllegalArgumentException("Expected alternating keys and values");
+      throw ArgumentError("Expected alternating keys and values");
     }
 
     Multimap<String, String> map = HashMultimap.create();
@@ -100,12 +100,12 @@
     return map;
   }
 
-  /** Create new HashMultimap with copy of Map. */
+  /** Create HashMultimap with copy of Map. */
    Multimap<String, String> newMultimap(Map<String, String> map) {
     return (map != null) ? Multimaps.forMap(map) : HashMultimap.create();
   }
 
-  /** Create new HashMultimap with copy of Multimap. */
+  /** Create HashMultimap with copy of Multimap. */
    Multimap<String, String> newMultimap(Multimap<String, String> map) {
     return (map != null) ? HashMultimap.create(map) : HashMultimap.create();
   }
@@ -127,7 +127,7 @@
 
     try {
       throw ex;
-    } catch (IllegalArgumentException
+    } catch (ArgumentError
         | ErrorResponseException
         | InsufficientDataException
         | InternalException
@@ -139,7 +139,7 @@
         | XmlParserException exc) {
       throw exc;
     } catch (Throwable exc) {
-      throw new RuntimeException(exc.getCause() == null ? exc : exc.getCause());
+      throw RuntimeException(exc.getCause() == null ? exc : exc.getCause());
     }
   }
 
@@ -171,7 +171,7 @@
       message = null;
     }
 
-    return new String[] {code, message};
+    return String[] {code, message};
   }
 
   /** Build URL for given parameters. */
@@ -183,7 +183,7 @@
       Multimap<String, String> queryParamMap)
 {
     if (bucketName == null && objectName != null) {
-      throw new IllegalArgumentException("null bucket name for object '" + objectName + "'");
+      throw ArgumentError("null bucket name for object '" + objectName + "'");
     }
 
     HttpUrl.Builder urlBuilder = this.baseUrl.newBuilder();
@@ -208,7 +208,7 @@
           s3Domain = "s3-fips.";
         } else if (isAccelerateHost) {
           if (bucketName.contains(".")) {
-            throw new IllegalArgumentException(
+            throw ArgumentError(
                 "bucket name '"
                     + bucketName
                     + "' with '.' is not allowed for accelerated endpoint");
@@ -237,7 +237,7 @@
         // Limitation: OkHttp does not allow to add '.' and '..' as path segment.
         for (String token : objectName.split("/")) {
           if (token.equals(".") || token.equals("..")) {
-            throw new IllegalArgumentException(
+            throw ArgumentError(
                 "object name with '.' or '..' path segment is not supported");
           }
         }
@@ -260,7 +260,7 @@
 
   /** Convert Multimap to Headers. */
    Headers httpHeaders(Multimap<String, String> headerMap) {
-    Headers.Builder builder = new Headers.Builder();
+    Headers.Builder builder = Headers.Builder();
     if (headerMap == null) return builder.build();
 
     if (headerMap.containsKey("Content-Encoding")) {
@@ -285,7 +285,7 @@
    Request createRequest(
       HttpUrl url, Method method, Headers headers, Object body, int length, Credentials creds)
 {
-    Request.Builder requestBuilder = new Request.Builder();
+    Request.Builder requestBuilder = Request.Builder();
     requestBuilder.url(url);
 
     if (headers != null) requestBuilder.headers(headers);
@@ -333,9 +333,9 @@
     if (body != null) {
       String contentType = (headers != null) ? headers.get("Content-Type") : null;
       if (body instanceof PartSource) {
-        requestBody = new HttpRequestBody((PartSource) body, contentType);
+        requestBody = HttpRequestBody((PartSource) body, contentType);
       } else {
-        requestBody = new HttpRequestBody((byte[]) body, length, contentType);
+        requestBody = HttpRequestBody((byte[]) body, length, contentType);
       }
     }
 
@@ -344,7 +344,7 @@
   }
 
    StringBuilder newTraceBuilder(Request request, String body) {
-    StringBuilder traceBuilder = new StringBuilder();
+    StringBuilder traceBuilder = StringBuilder();
     traceBuilder.append("---------START-HTTP---------\n");
     String encodedPath = request.url().encodedPath();
     String encodedQuery = request.url().encodedQuery();
@@ -405,7 +405,7 @@
 
     StringBuilder traceBuilder =
         newTraceBuilder(
-            request, traceRequestBody ? new String((byte[]) body, StandardCharsets.UTF_8) : null);
+            request, traceRequestBody ? String((byte[]) body, StandardCharsets.UTF_8) : null);
     PrintWriter traceStream = this.traceStream;
     if (traceStream != null) traceStream.println(traceBuilder.toString());
     traceBuilder.append("\n");
@@ -416,11 +416,11 @@
       httpClient = this.httpClient.newBuilder().retryOnConnectionFailure(false).build();
     }
 
-    CompletableFuture<Response> completableFuture = new CompletableFuture<>();
+    CompletableFuture<Response> completableFuture = CompletableFuture<>();
     httpClient
         .newCall(request)
         .enqueue(
-            new Callback() {
+            Callback() {
               @Override
                void onFailure(final Call call, IOException e) {
                 completableFuture.completeExceptionally(e);
@@ -478,14 +478,14 @@
                         || !Arrays.asList(contentType.split(";")).contains("application/xml"))) {
                   if (response.code() == 304 && response.body().contentLength() == 0) {
                     completableFuture.completeExceptionally(
-                        new ServerException(
+                        ServerException(
                             "server failed with HTTP status code " + response.code(),
                             response.code(),
                             traceBuilder.toString()));
                   }
 
                   completableFuture.completeExceptionally(
-                      new InvalidResponseException(
+                      InvalidResponseException(
                           response.code(),
                           contentType,
                           errorXml.substring(
@@ -504,7 +504,7 @@
                   }
                 } else if (!method.equals(Method.HEAD)) {
                   completableFuture.completeExceptionally(
-                      new InvalidResponseException(
+                      InvalidResponseException(
                           response.code(), contentType, errorXml, traceBuilder.toString()));
                   return;
                 }
@@ -560,7 +560,7 @@
                       break;
                     default:
                       completableFuture.completeExceptionally(
-                          new ServerException(
+                          ServerException(
                               "server failed with HTTP status code " + response.code(),
                               response.code(),
                               traceBuilder.toString()));
@@ -568,7 +568,7 @@
                   }
 
                   errorResponse =
-                      new ErrorResponse(
+                      ErrorResponse(
                           code,
                           message,
                           bucketName,
@@ -585,7 +585,7 @@
                 }
 
                 ErrorResponseException e =
-                    new ErrorResponseException(errorResponse, response, traceBuilder.toString());
+                    ErrorResponseException(errorResponse, response, traceBuilder.toString());
                 completableFuture.completeExceptionally(e);
               }
             });
@@ -638,7 +638,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             });
   }
@@ -664,7 +664,7 @@
     try {
       return completableFuture.get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -713,7 +713,7 @@
     if (region != null) {
       // Error out if region does not match with region passed via constructor.
       if (this.region != null && !this.region.equals(region)) {
-        throw new IllegalArgumentException(
+        throw ArgumentError(
             "region must be " + this.region + ", but passed " + region);
       }
       return CompletableFuture.completedFuture(region);
@@ -745,7 +745,7 @@
               location = lc.location();
             }
           } catch (XmlParserException e) {
-            throw new CompletionException(e);
+            throw CompletionException(e);
           }
 
           regionCache.put(bucketName, location);
@@ -764,7 +764,7 @@
     try {
       return getRegionAsync(bucketName, region).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -790,7 +790,7 @@
     try {
       return executeGetAsync(args, headers, queryParams).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -810,7 +810,7 @@
                   return null;
                 }
               }
-              throw new CompletionException(e);
+              throw CompletionException(e);
             })
         .thenCompose(
             response -> {
@@ -826,7 +826,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             });
   }
@@ -843,7 +843,7 @@
     try {
       return executeHeadAsync(args, headers, queryParams).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -874,7 +874,7 @@
     try {
       return executeDeleteAsync(args, headers, queryParams).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -906,7 +906,7 @@
     try {
       return executePostAsync(args, headers, queryParams, data).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -940,7 +940,7 @@
     try {
       return executePutAsync(args, headers, queryParams, data, length).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -958,7 +958,7 @@
       final int i = index;
       completableFuture =
           completableFuture.thenCombine(
-              statObjectAsync(new StatObjectArgs((ObjectReadArgs) src)),
+              statObjectAsync(StatObjectArgs((ObjectReadArgs) src)),
               (partCount, statObjectResponse) -> {
                 src.buildHeaders(statObjectResponse.size(), statObjectResponse.etag());
 
@@ -972,7 +972,7 @@
                 if (size < ObjectWriteArgs.MIN_MULTIPART_SIZE
                     && sources.size() != 1
                     && i != sources.size()) {
-                  throw new IllegalArgumentException(
+                  throw ArgumentError(
                       "source "
                           + src.bucket()
                           + "/"
@@ -985,7 +985,7 @@
 
                 objectSize[0] += size;
                 if (objectSize[0] > ObjectWriteArgs.MAX_OBJECT_SIZE) {
-                  throw new IllegalArgumentException(
+                  throw ArgumentError(
                       "destination object size must be less than "
                           + ObjectWriteArgs.MAX_OBJECT_SIZE);
                 }
@@ -1002,7 +1002,7 @@
                   if (lastPartSize < ObjectWriteArgs.MIN_MULTIPART_SIZE
                       && sources.size() != 1
                       && i != sources.size()) {
-                    throw new IllegalArgumentException(
+                    throw ArgumentError(
                         "source "
                             + src.bucket()
                             + "/"
@@ -1019,7 +1019,7 @@
                 }
 
                 if (partCount > ObjectWriteArgs.MAX_MULTIPART_COUNT) {
-                  throw new IllegalArgumentException(
+                  throw ArgumentError(
                       "Compose sources create more than allowed multipart count "
                           + ObjectWriteArgs.MAX_MULTIPART_COUNT);
                 }
@@ -1041,9 +1041,9 @@
       i++;
       StatObjectResponse stat = null;
       try {
-        stat = statObjectAsync(new StatObjectArgs((ObjectReadArgs) src)).get();
+        stat = statObjectAsync(StatObjectArgs((ObjectReadArgs) src)).get();
       } catch (InterruptedException e) {
-        throw new RuntimeException(e);
+        throw RuntimeException(e);
       } catch (ExecutionException e) {
         throwEncapsulatedException(e);
       }
@@ -1058,7 +1058,7 @@
       }
 
       if (size < ObjectWriteArgs.MIN_MULTIPART_SIZE && sources.size() != 1 && i != sources.size()) {
-        throw new IllegalArgumentException(
+        throw ArgumentError(
             "source "
                 + src.bucket()
                 + "/"
@@ -1071,7 +1071,7 @@
 
       objectSize += size;
       if (objectSize > ObjectWriteArgs.MAX_OBJECT_SIZE) {
-        throw new IllegalArgumentException(
+        throw ArgumentError(
             "destination object size must be less than " + ObjectWriteArgs.MAX_OBJECT_SIZE);
       }
 
@@ -1087,7 +1087,7 @@
         if (lastPartSize < ObjectWriteArgs.MIN_MULTIPART_SIZE
             && sources.size() != 1
             && i != sources.size()) {
-          throw new IllegalArgumentException(
+          throw ArgumentError(
               "source "
                   + src.bucket()
                   + "/"
@@ -1104,7 +1104,7 @@
       }
 
       if (partCount > ObjectWriteArgs.MAX_MULTIPART_COUNT) {
-        throw new IllegalArgumentException(
+        throw ArgumentError(
             "Compose sources create more than allowed multipart count "
                 + ObjectWriteArgs.MAX_MULTIPART_COUNT);
       }
@@ -1135,7 +1135,7 @@
           | NoSuchAlgorithmException
           | ServerException
           | XmlParserException e) {
-        this.error = new Result<>(e);
+        this.error = Result<>(e);
       }
 
       if (this.listObjectsResult != null) {
@@ -1143,9 +1143,9 @@
         this.deleteMarkerIterator = this.listObjectsResult.deleteMarkers().iterator();
         this.prefixIterator = this.listObjectsResult.commonPrefixes().iterator();
       } else {
-        this.itemIterator = new LinkedList<Item>().iterator();
-        this.deleteMarkerIterator = new LinkedList<DeleteMarker>().iterator();
-        this.prefixIterator = new LinkedList<Prefix>().iterator();
+        this.itemIterator = LinkedList<Item>().iterator();
+        this.deleteMarkerIterator = LinkedList<DeleteMarker>().iterator();
+        this.prefixIterator = LinkedList<Prefix>().iterator();
       }
     }
 
@@ -1179,7 +1179,7 @@
 
     @Override
      Result<Item> next() {
-      if (this.completed) throw new NoSuchElementException();
+      if (this.completed) throw NoSuchElementException();
       if (this.error == null
           && this.itemIterator == null
           && this.deleteMarkerIterator == null
@@ -1213,25 +1213,25 @@
 
       if (item != null) {
         item.setEncodingType(this.listObjectsResult.encodingType());
-        return new Result<>(item);
+        return Result<>(item);
       }
 
       this.completed = true;
-      throw new NoSuchElementException();
+      throw NoSuchElementException();
     }
 
     @Override
      void remove() {
-      throw new UnsupportedOperationException();
+      throw UnsupportedOperationException();
     }
   }
 
   /** Execute list objects v2. */
    Iterable<Result<Item>> listObjectsV2(ListObjectsArgs args) {
-    return new Iterable<Result<Item>>() {
+    return Iterable<Result<Item>>() {
       @Override
        Iterator<Result<Item>> iterator() {
-        return new ObjectIterator() {
+        return ObjectIterator() {
            ListBucketResultV2 result = null;
 
           @Override
@@ -1265,10 +1265,10 @@
 
   /** Execute list objects v1. */
    Iterable<Result<Item>> listObjectsV1(ListObjectsArgs args) {
-    return new Iterable<Result<Item>>() {
+    return Iterable<Result<Item>>() {
       @Override
        Iterator<Result<Item>> iterator() {
-        return new ObjectIterator() {
+        return ObjectIterator() {
            ListBucketResultV1 result = null;
 
           @Override
@@ -1302,10 +1302,10 @@
 
   /** Execute list object versions. */
    Iterable<Result<Item>> listObjectVersions(ListObjectsArgs args) {
-    return new Iterable<Result<Item>>() {
+    return Iterable<Result<Item>>() {
       @Override
        Iterator<Result<Item>> iterator() {
-        return new ObjectIterator() {
+        return ObjectIterator() {
            ListVersionsResult result = null;
 
           @Override
@@ -1337,11 +1337,11 @@
 
    PartReader newPartReader(Object data, int objectSize, int partSize, int partCount) {
     if (data instanceof RandomAccessFile) {
-      return new PartReader((RandomAccessFile) data, objectSize, partSize, partCount);
+      return PartReader((RandomAccessFile) data, objectSize, partSize, partCount);
     }
 
     if (data instanceof InputStream) {
-      return new PartReader((InputStream) data, objectSize, partSize, partCount);
+      return PartReader((InputStream) data, objectSize, partSize, partCount);
     }
 
     return null;
@@ -1364,7 +1364,7 @@
     try {
       return putObjectAsync(args, data, objectSize, partSize, partCount, contentType).get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -1379,7 +1379,7 @@
 
      NotificationResultRecords(Response response) {
       this.response = response;
-      this.scanner = new Scanner(response.body().charStream()).useDelimiter("\n");
+      this.scanner = Scanner(response.body().charStream()).useDelimiter("\n");
       this.mapper =
           JsonMapper.builder()
               .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -1389,7 +1389,7 @@
 
     /** returns closeable iterator of result of notification records. */
      CloseableIterator<Result<NotificationRecords>> closeableIterator() {
-      return new CloseableIterator<Result<NotificationRecords>>() {
+      return CloseableIterator<Result<NotificationRecords>>() {
         String recordsString = null;
         NotificationRecords records = null;
         bool isClosed = false;
@@ -1433,20 +1433,20 @@
 
         @Override
          Result<NotificationRecords> next() {
-          if (isClosed) throw new NoSuchElementException();
+          if (isClosed) throw NoSuchElementException();
           if ((recordsString == null || recordsString.equals("")) && !populate()) {
-            throw new NoSuchElementException();
+            throw NoSuchElementException();
           }
 
           try {
             records = mapper.readValue(recordsString, NotificationRecords.class);
-            return new Result<>(records);
+            return Result<>(records);
           } catch (JsonMappingException e) {
-            return new Result<>(e);
+            return Result<>(e);
           } catch (JsonParseException e) {
-            return new Result<>(e);
+            return Result<>(e);
           } catch (IOException e) {
-            return new Result<>(e);
+            return Result<>(e);
           } finally {
             recordsString = null;
             records = null;
@@ -1523,9 +1523,9 @@
    * @see #traceOff
    */
    void traceOn(OutputStream traceStream) {
-    if (traceStream == null) throw new IllegalArgumentException("trace stream must be provided");
+    if (traceStream == null) throw ArgumentError("trace stream must be provided");
     this.traceStream =
-        new PrintWriter(new OutputStreamWriter(traceStream, StandardCharsets.UTF_8), true);
+        PrintWriter(OutputStreamWriter(traceStream, StandardCharsets.UTF_8), true);
   }
 
   /**
@@ -1579,7 +1579,7 @@
             (args.versionId() != null) ? newMultimap("versionId", args.versionId()) : null)
         .thenApply(
             response ->
-                new StatObjectResponse(
+                StatObjectResponse(
                     response.headers(), args.bucket(), args.region(), args.object()));
   }
 
@@ -1629,13 +1629,13 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
             response -> {
               try {
-                return new AbortMultipartUploadResponse(
+                return AbortMultipartUploadResponse(
                     response.headers(), bucketName, region, objectName, uploadId);
               } finally {
                 response.close();
@@ -1680,7 +1680,7 @@
               bucketName, region, objectName, uploadId, extraHeaders, extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -1729,7 +1729,7 @@
                     location,
                     httpHeaders(extraHeaders),
                     queryParams,
-                    new CompleteMultipartUpload(parts),
+                    CompleteMultipartUpload(parts),
                     0);
               } catch (InsufficientDataException
                   | InternalException
@@ -1737,7 +1737,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -1749,8 +1749,8 @@
                   try {
                     if (Xml.validate(ErrorResponse.class, bodyContent)) {
                       ErrorResponse errorResponse = Xml.unmarshal(ErrorResponse.class, bodyContent);
-                      throw new CompletionException(
-                          new ErrorResponseException(errorResponse, response, null));
+                      throw CompletionException(
+                          ErrorResponseException(errorResponse, response, null));
                     }
                   } catch (XmlParserException e) {
                     // As it is not <Error> message, fallback to parse CompleteMultipartUploadOutput
@@ -1760,7 +1760,7 @@
                   try {
                     CompleteMultipartUploadOutput result =
                         Xml.unmarshal(CompleteMultipartUploadOutput.class, bodyContent);
-                    return new ObjectWriteResponse(
+                    return ObjectWriteResponse(
                         response.headers(),
                         result.bucket(),
                         result.location(),
@@ -1776,7 +1776,7 @@
                   }
                 }
 
-                return new ObjectWriteResponse(
+                return ObjectWriteResponse(
                     response.headers(),
                     bucketName,
                     region,
@@ -1784,7 +1784,7 @@
                     null,
                     response.header("x-amz-version-id"));
               } catch (IOException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -1830,7 +1830,7 @@
               bucketName, region, objectName, uploadId, parts, extraHeaders, extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -1890,7 +1890,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -1899,10 +1899,10 @@
                 InitiateMultipartUploadResult result =
                     Xml.unmarshal(
                         InitiateMultipartUploadResult.class, response.body().charStream());
-                return new CreateMultipartUploadResponse(
+                return CreateMultipartUploadResponse(
                     response.headers(), bucketName, region, objectName, result);
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -1943,7 +1943,7 @@
       return createMultipartUploadAsync(bucketName, region, objectName, headers, extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -1979,10 +1979,10 @@
       Multimap<String, String> extraHeaders,
       Multimap<String, String> extraQueryParams)
 {
-    if (objectList == null) objectList = new LinkedList<>();
+    if (objectList == null) objectList = LinkedList<>();
 
     if (objectList.size() > 1000) {
-      throw new IllegalArgumentException("list of objects must not be more than 1000");
+      throw ArgumentError("list of objects must not be more than 1000");
     }
 
     Multimap<String, String> headers =
@@ -2002,7 +2002,7 @@
                     location,
                     httpHeaders(headers),
                     merge(extraQueryParams, newMultimap("delete", "")),
-                    new DeleteRequest(objects, quiet),
+                    DeleteRequest(objects, quiet),
                     0);
               } catch (InsufficientDataException
                   | InternalException
@@ -2010,7 +2010,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -2020,8 +2020,8 @@
                 try {
                   if (Xml.validate(DeleteError.class, bodyContent)) {
                     DeleteError error = Xml.unmarshal(DeleteError.class, bodyContent);
-                    DeleteResult result = new DeleteResult(error);
-                    return new DeleteObjectsResponse(
+                    DeleteResult result = DeleteResult(error);
+                    return DeleteObjectsResponse(
                         response.headers(), bucketName, region, result);
                   }
                 } catch (XmlParserException e) {
@@ -2030,9 +2030,9 @@
                 }
 
                 DeleteResult result = Xml.unmarshal(DeleteResult.class, bodyContent);
-                return new DeleteObjectsResponse(response.headers(), bucketName, region, result);
+                return DeleteObjectsResponse(response.headers(), bucketName, region, result);
               } catch (IOException | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2084,7 +2084,7 @@
               extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -2158,7 +2158,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -2166,9 +2166,9 @@
               try {
                 ListBucketResultV2 result =
                     Xml.unmarshal(ListBucketResultV2.class, response.body().charStream());
-                return new ListObjectsV2Response(response.headers(), bucketName, region, result);
+                return ListObjectsV2Response(response.headers(), bucketName, region, result);
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2234,7 +2234,7 @@
               extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -2298,7 +2298,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -2306,9 +2306,9 @@
               try {
                 ListBucketResultV1 result =
                     Xml.unmarshal(ListBucketResultV1.class, response.body().charStream());
-                return new ListObjectsV1Response(response.headers(), bucketName, region, result);
+                return ListObjectsV1Response(response.headers(), bucketName, region, result);
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2365,7 +2365,7 @@
               extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -2434,7 +2434,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -2442,10 +2442,10 @@
               try {
                 ListVersionsResult result =
                     Xml.unmarshal(ListVersionsResult.class, response.body().charStream());
-                return new ListObjectVersionsResponse(
+                return ListObjectVersionsResponse(
                     response.headers(), bucketName, region, result);
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -2506,7 +2506,7 @@
               extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -2516,7 +2516,7 @@
    Part[] uploadParts(
       PutObjectBaseArgs args, String uploadId, PartReader partReader, PartSource firstPartSource)
 {
-    Part[] parts = new Part[ObjectWriteArgs.MAX_MULTIPART_COUNT];
+    Part[] parts = Part[ObjectWriteArgs.MAX_MULTIPART_COUNT];
     int partNumber = 0;
     PartSource partSource = firstPartSource;
     while (true) {
@@ -2539,7 +2539,7 @@
                   ssecHeaders,
                   null)
               .get();
-      parts[partNumber - 1] = new Part(partNumber, response.etag());
+      parts[partNumber - 1] = Part(partNumber, response.etag());
 
       partSource = partReader.getPart();
       if (partSource == null) break;
@@ -2589,7 +2589,7 @@
               if (throwable instanceof CompletionException) {
                 throwable = ((CompletionException) throwable).getCause();
               }
-              throw new CompletionException(throwable);
+              throw CompletionException(throwable);
             }
             try {
               abortMultipartUploadAsync(
@@ -2610,7 +2610,7 @@
               if (throwable instanceof CompletionException) {
                 throwable = ((CompletionException) throwable).getCause();
               }
-              throw new CompletionException(throwable);
+              throw CompletionException(throwable);
             }
           }
           return response;
@@ -2645,7 +2645,7 @@
 {
     PartReader partReader = newPartReader(data, objectSize, partSize, partCount);
     if (partReader == null) {
-      throw new IllegalArgumentException("data must be RandomAccessFile or InputStream");
+      throw ArgumentError("data must be RandomAccessFile or InputStream");
     }
 
     Multimap<String, String> headers = newMultimap(args.extraHeaders());
@@ -2657,7 +2657,7 @@
               try {
                 return partReader.getPart();
               } catch (NoSuchAlgorithmException | IOException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenCompose(
@@ -2680,7 +2680,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             });
   }
@@ -2730,13 +2730,13 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
             response -> {
               try {
-                return new ObjectWriteResponse(
+                return ObjectWriteResponse(
                     response.headers(),
                     bucketName,
                     region,
@@ -2780,7 +2780,7 @@
         || data instanceof RandomAccessFile
         || data instanceof byte[]
         || data instanceof CharSequence)) {
-      throw new IllegalArgumentException(
+      throw ArgumentError(
           "data must be InputStream, RandomAccessFile, byte[] or String");
     }
 
@@ -2810,13 +2810,13 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
             response -> {
               try {
-                return new ObjectWriteResponse(
+                return ObjectWriteResponse(
                     response.headers(),
                     bucketName,
                     region,
@@ -2865,7 +2865,7 @@
       return putObjectAsync(bucketName, region, objectName, data, length, headers, extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -2942,7 +2942,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -2950,10 +2950,10 @@
               try {
                 ListMultipartUploadsResult result =
                     Xml.unmarshal(ListMultipartUploadsResult.class, response.body().charStream());
-                return new ListMultipartUploadsResponse(
+                return ListMultipartUploadsResponse(
                     response.headers(), bucketName, region, result);
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -3014,7 +3014,7 @@
               extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -3082,7 +3082,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -3090,10 +3090,10 @@
               try {
                 ListPartsResult result =
                     Xml.unmarshal(ListPartsResult.class, response.body().charStream());
-                return new ListPartsResponse(
+                return ListPartsResponse(
                     response.headers(), bucketName, region, objectName, result);
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }
@@ -3147,7 +3147,7 @@
               extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -3206,13 +3206,13 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
             response -> {
               try {
-                return new UploadPartResponse(
+                return UploadPartResponse(
                     response.headers(),
                     bucketName,
                     region,
@@ -3262,7 +3262,7 @@
         || data instanceof RandomAccessFile
         || data instanceof byte[]
         || data instanceof CharSequence)) {
-      throw new IllegalArgumentException(
+      throw ArgumentError(
           "data must be InputStream, RandomAccessFile, byte[] or String");
     }
 
@@ -3302,13 +3302,13 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
             response -> {
               try {
-                return new UploadPartResponse(
+                return UploadPartResponse(
                     response.headers(),
                     bucketName,
                     region,
@@ -3372,7 +3372,7 @@
               extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -3418,7 +3418,7 @@
               bucketName, region, objectName, uploadId, partNumber, headers, extraQueryParams)
           .get();
     } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      throw RuntimeException(e);
     } catch (ExecutionException e) {
       throwEncapsulatedException(e);
       return null;
@@ -3476,7 +3476,7 @@
                   | IOException
                   | NoSuchAlgorithmException
                   | XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               }
             })
         .thenApply(
@@ -3484,7 +3484,7 @@
               try {
                 CopyPartResult result =
                     Xml.unmarshal(CopyPartResult.class, response.body().charStream());
-                return new UploadPartCopyResponse(
+                return UploadPartCopyResponse(
                     response.headers(),
                     bucketName,
                     region,
@@ -3493,7 +3493,7 @@
                     partNumber,
                     result);
               } catch (XmlParserException e) {
-                throw new CompletionException(e);
+                throw CompletionException(e);
               } finally {
                 response.close();
               }

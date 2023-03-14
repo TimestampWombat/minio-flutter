@@ -11,7 +11,7 @@ EcsCredentials _$EcsCredentialsFromJson(Map<String, dynamic> json) =>
       json['AccessKeyID'] as String,
       json['SecretAccessKey'] as String,
       json['Token'] as String,
-      ResponseDate.fromString(json['Expiration'] as String?),
+      ResponseDate.fromJson(json['Expiration'] as String?),
       json['Code'] as String?,
       json['Message'] as String?,
     );

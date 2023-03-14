@@ -11,7 +11,7 @@ class LegalHold {
 
   LegalHold(this.statusName);
 
-  /// Constructs a new LegalHold object with given status.
+  /// Constructs a LegalHold object with given status.
   LegalHold.bool(bool status) {
     statusName = status ? "ON" : "OFF";
   }

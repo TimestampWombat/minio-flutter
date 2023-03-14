@@ -154,7 +154,7 @@
 //     /// @throws NullPointerException if {@code obj} is {@code null}
 //      static <T> T requireNonNull(T obj) {
 //         if (obj == null)
-//             throw new NullPointerException();
+//             throw NullPointerException();
 //         return obj;
 //     }
 
@@ -177,7 +177,7 @@
 //     /// @throws NullPointerException if {@code obj} is {@code null}
 //      static T requireNonNull<T>(T? obj, String message) {
 //         if (obj == null)
-//             throw new NullPointerException(message);
+//             throw NullPointerException(message);
 //         return obj;
 //     }
 
@@ -267,7 +267,7 @@
 //     /// @since 1.8
 //      static <T> T requireNonNull(T obj, Supplier<String> messageSupplier) {
 //         if (obj == null)
-//             throw new NullPointerException(messageSupplier == null ?
+//             throw NullPointerException(messageSupplier == null ?
 //                                            null : messageSupplier.get());
 //         return obj;
 //     }
