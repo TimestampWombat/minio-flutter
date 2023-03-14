@@ -1,13 +1,19 @@
-@Root(name = "SseKmsEncryptedObjects")
-public class SseKmsEncryptedObjects {
-  @Element(name = "Status")
-  private Status status;
+// @Root(name = "SseKmsEncryptedObjects")
+import 'package:json_annotation/json_annotation.dart';
 
-  public SseKmsEncryptedObjects(@Nonnull @Element(name = "Status") Status status) {
-    this.status = Objects.requireNonNull(status, "Status must not be null");
-  }
+import 'status.dart';
 
-  public Status status() {
-    return this.status;
-  }
+part 'sse_kms_encrypted_objects.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.pascal)
+class SseKmsEncryptedObjects {
+  // @Element(name = "Status")
+  final Status status;
+
+  SseKmsEncryptedObjects(this.status);
+
+  factory SseKmsEncryptedObjects.fromJson(Map<String, dynamic> json) =>
+      _$SseKmsEncryptedObjectsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SseKmsEncryptedObjectsToJson(this);
 }

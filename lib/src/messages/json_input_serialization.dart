@@ -1,11 +1,19 @@
-@Root(name = "JSON")
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "URF_UNREAD_FIELD")
-public class JsonInputSerialization {
-  @Element(name = "Type", required = false)
-  private JsonType type;
+// @Root(name = "JSON")
+// @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "URF_UNREAD_FIELD")
+import 'package:json_annotation/json_annotation.dart';
 
-  /** Constructs a JsonInputSerialization object. */
-  public JsonInputSerialization(JsonType type) {
-    this.type = type;
-  }
+import 'json_type.dart';
+
+part 'json_input_serialization.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.pascal)
+class JsonInputSerialization {
+  final JsonType type;
+
+  JsonInputSerialization(this.type);
+
+  factory JsonInputSerialization.fromJson(Map<String, dynamic> json) =>
+      _$JsonInputSerializationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$JsonInputSerializationToJson(this);
 }

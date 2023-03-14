@@ -1,19 +1,23 @@
-@Root(name = "NoncurrentVersionTransition")
-public class NoncurrentVersionTransition extends NoncurrentVersionExpiration {
-  @Element(name = "StorageClass")
-  private String storageClass;
+// @Root(name = "NoncurrentVersionTransition")
+import 'package:json_annotation/json_annotation.dart';
 
-  public NoncurrentVersionTransition(
-      @Element(name = "NoncurrentDays", required = false) int noncurrentDays,
-      @Nonnull @Element(name = "StorageClass", required = false) String storageClass) {
-    super(noncurrentDays);
-    if (storageClass == null || storageClass.isEmpty()) {
+import 'noncurrent_version_expiration.dart';
+
+part 'noncurrent_version_transition.g.dart';
+
+@JsonSerializable(fieldRename: FieldRename.pascal)
+class NoncurrentVersionTransition extends NoncurrentVersionExpiration {
+  // @Element(name = "StorageClass")
+  final String storageClass;
+
+  NoncurrentVersionTransition(super.noncurrentDays, this.storageClass) {
+    if (storageClass.isEmpty) {
       throw ArgumentError("StorageClass must be provided");
     }
-    this.storageClass = storageClass;
   }
 
-  public String storageClass() {
-    return storageClass;
-  }
+  factory NoncurrentVersionTransition.fromJson(Map<String, dynamic> json) =>
+      _$NoncurrentVersionTransitionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$NoncurrentVersionTransitionToJson(this);
 }

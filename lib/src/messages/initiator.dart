@@ -2,6 +2,8 @@
 
 import 'package:json_annotation/json_annotation.dart';
 
+part 'initiator.g.dart';
+
 @JsonSerializable(fieldRename: FieldRename.pascal)
 class Initiator {
   @JsonKey(name: "ID")

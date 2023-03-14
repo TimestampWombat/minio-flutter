@@ -1,29 +1,24 @@
-@Root(name = "InitiateMultipartUploadResult", strict = false)
-@Namespace(reference = "http://s3.amazonaws.com/doc/2006-03-01/")
-public class InitiateMultipartUploadResult {
-  @Element(name = "Bucket")
-  private String bucketName;
+// @Root(name = "InitiateMultipartUploadResult", strict = false)
+// @Namespace(reference = "http://s3.amazonaws.com/doc/2006-03-01/")
+import 'package:json_annotation/json_annotation.dart';
 
-  @Element(name = "Key")
-  private String objectName;
+part 'initiate_multipart_upload_result.g.dart';
 
-  @Element(name = "UploadId")
-  private String uploadId;
+@JsonSerializable(fieldRename: FieldRename.pascal)
+class InitiateMultipartUploadResult {
+  @JsonKey(name: "Bucket")
+  final String bucketName;
 
-  public InitiateMultipartUploadResult() {}
+  @JsonKey(name: "Key")
+  final String objectName;
 
-  /** Returns bucket name. */
-  public String bucketName() {
-    return bucketName;
-  }
+  final String uploadId;
 
-  /** Returns object name. */
-  public String objectName() {
-    return objectName;
-  }
+  InitiateMultipartUploadResult(
+      this.bucketName, this.objectName, this.uploadId);
 
-  /** Returns upload ID. */
-  public String uploadId() {
-    return uploadId;
-  }
+  factory InitiateMultipartUploadResult.fromJson(Map<String, dynamic> json) =>
+      _$InitiateMultipartUploadResultFromJson(json);
+
+  Map<String, dynamic> toJson() => _$InitiateMultipartUploadResultToJson(this);
 }

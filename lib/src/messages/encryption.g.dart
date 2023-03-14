@@ -21,5 +21,5 @@ Map<String, dynamic> _$EncryptionToJson(Encryption instance) =>
 
 const _$SseAlgorithmEnumMap = {
   SseAlgorithm.AES256: 'AES256',
-  SseAlgorithm.AWS_KMS: 'AWS_KMS',
+  SseAlgorithm.AWS_KMS: 'aws:kms',
 };

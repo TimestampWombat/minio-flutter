@@ -9,14 +9,13 @@ part of 'csv_input_serialization.dart';
 CsvInputSerialization _$CsvInputSerializationFromJson(
         Map<String, dynamic> json) =>
     CsvInputSerialization(
-      allowQuotedRecordDelimiter: json['AllowQuotedRecordDelimiter'] as bool?,
-      comments: json['Comments'] as String?,
-      fieldDelimiter: json['FieldDelimiter'] as String?,
-      fileHeaderInfo:
-          $enumDecodeNullable(_$FileHeaderInfoEnumMap, json['FileHeaderInfo']),
-      quoteCharacter: json['QuoteCharacter'] as String?,
-      quoteEscapeCharacter: json['QuoteEscapeCharacter'] as String?,
-      recordDelimiter: json['RecordDelimiter'] as String?,
+      json['AllowQuotedRecordDelimiter'] as bool?,
+      json['Comments'] as String?,
+      json['FieldDelimiter'] as String?,
+      $enumDecodeNullable(_$FileHeaderInfoEnumMap, json['FileHeaderInfo']),
+      json['QuoteCharacter'] as String?,
+      json['QuoteEscapeCharacter'] as String?,
+      json['RecordDelimiter'] as String?,
     );
 
 Map<String, dynamic> _$CsvInputSerializationToJson(

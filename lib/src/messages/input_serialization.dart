@@ -1,31 +1,42 @@
-@Root(name = "InputSerialization")
-@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "URF_UNREAD_FIELD")
-public class InputSerialization {
-  @Element(name = "CompressionType", required = false)
-  private CompressionType compressionType;
+// @Root(name = "InputSerialization")
+// @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(value = "URF_UNREAD_FIELD")
+import 'package:json_annotation/json_annotation.dart';
 
-  @Element(name = "CSV", required = false)
-  private CsvInputSerialization csv;
+import 'compression_type.dart';
+import 'csv_input_serialization.dart';
+import 'file_header_info.dart';
+import 'json_input_serialization.dart';
+import 'json_type.dart';
+import 'parquet_input_serialization.dart';
 
-  @Element(name = "JSON", required = false)
-  private JsonInputSerialization json;
+part 'input_serialization.g.dart';
 
-  @Element(name = "Parquet", required = false)
-  private ParquetInputSerialization parquet;
+@JsonSerializable(fieldRename: FieldRename.pascal)
+class InputSerialization {
+  // @Element(name = "CompressionType", required = false)
+  final CompressionType? compressionType;
 
-  /** Constructs a InputSerialization object with CSV. */
-  public InputSerialization(
-      CompressionType compressionType,
-      boolean allowQuotedRecordDelimiter,
-      Character comments,
-      Character fieldDelimiter,
-      FileHeaderInfo fileHeaderInfo,
-      Character quoteCharacter,
-      Character quoteEscapeCharacter,
-      Character recordDelimiter) {
-    this.compressionType = compressionType;
-    this.csv =
-        CsvInputSerialization(
+  @JsonKey(name: "CSV")
+  late final CsvInputSerialization? csv;
+
+  @JsonKey(name: "JSON")
+  late final JsonInputSerialization? json;
+
+  late final ParquetInputSerialization? parquet;
+
+  InputSerialization(this.compressionType, this.csv, this.json, this.parquet);
+
+  /// Constructs a InputSerialization object with CSV.
+  InputSerialization.csv(
+      this.compressionType,
+      bool? allowQuotedRecordDelimiter,
+      String? comments,
+      String? fieldDelimiter,
+      FileHeaderInfo? fileHeaderInfo,
+      String? quoteCharacter,
+      String? quoteEscapeCharacter,
+      String? recordDelimiter)
+      : csv = CsvInputSerialization(
             allowQuotedRecordDelimiter,
             comments,
             fieldDelimiter,
@@ -33,16 +44,18 @@ public class InputSerialization {
             quoteCharacter,
             quoteEscapeCharacter,
             recordDelimiter);
-  }
 
-  /** Constructs a InputSerialization object with JSON. */
-  public InputSerialization(CompressionType compressionType, JsonType type) {
-    this.compressionType = compressionType;
-    this.json = JsonInputSerialization(type);
-  }
+  /// Constructs a InputSerialization object with JSON.
+  InputSerialization.json(this.compressionType, JsonType type)
+      : json = JsonInputSerialization(type);
 
-  /** Constructs a InputSerialization object with Parquet. */
-  public InputSerialization() {
-    this.parquet = ParquetInputSerialization();
-  }
+  /// Constructs a InputSerialization object with Parquet.
+  InputSerialization.parquet()
+      : compressionType = null,
+        parquet = ParquetInputSerialization();
+
+  factory InputSerialization.fromJson(Map<String, dynamic> json) =>
+      _$InputSerializationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$InputSerializationToJson(this);
 }

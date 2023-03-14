@@ -1,98 +1,75 @@
-@Root(name = "Rule")
-public class LifecycleRule {
-  @Element(name = "AbortIncompleteMultipartUpload", required = false)
-  private AbortIncompleteMultipartUpload abortIncompleteMultipartUpload;
+// @Root(name = "Rule")
 
-  @Element(name = "Expiration", required = false)
-  private Expiration expiration;
+import 'package:json_annotation/json_annotation.dart';
 
-  @Element(name = "Filter", required = false)
-  private RuleFilter filter;
+import 'abort_incomplete_multipart_upload.dart';
+import 'expiration.dart';
+import 'noncurrent_version_expiration.dart';
+import 'noncurrent_version_transition.dart';
+import 'rule_filter.dart';
+import 'status.dart';
+import 'transition.dart';
 
-  @Element(name = "ID", required = false)
-  private String id;
+part 'lifecycle_rule.g.dart';
 
-  @Element(name = "NoncurrentVersionExpiration", required = false)
-  private NoncurrentVersionExpiration noncurrentVersionExpiration;
+@JsonSerializable(fieldRename: FieldRename.pascal)
+class LifecycleRule {
+  // @Element(name = "AbortIncompleteMultipartUpload", required = false)
+  final AbortIncompleteMultipartUpload? abortIncompleteMultipartUpload;
 
-  @Element(name = "NoncurrentVersionTransition", required = false)
-  private NoncurrentVersionTransition noncurrentVersionTransition;
+  // @Element(name = "Expiration", required = false)
+  final Expiration? expiration;
 
-  @Element(name = "Status")
-  private Status status;
+  // @Element(name = "Filter", required = false)
+  final RuleFilter filter;
 
-  @Element(name = "Transition", required = false)
-  private Transition transition;
+  @JsonKey(name: "ID")
+  late final String? id;
 
-  /** Constructs server-side encryption configuration rule. */
-  public LifecycleRule(
-      @Nonnull @Element(name = "Status") Status status,
-      @Nullable @Element(name = "AbortIncompleteMultipartUpload", required = false)
-          AbortIncompleteMultipartUpload abortIncompleteMultipartUpload,
-      @Nullable @Element(name = "Expiration", required = false) Expiration expiration,
-      @Nonnull @Element(name = "Filter", required = false) RuleFilter filter,
-      @Nullable @Element(name = "ID", required = false) String id,
-      @Nullable @Element(name = "NoncurrentVersionExpiration", required = false)
-          NoncurrentVersionExpiration noncurrentVersionExpiration,
-      @Nullable @Element(name = "NoncurrentVersionTransition", required = false)
-          NoncurrentVersionTransition noncurrentVersionTransition,
-      @Nullable @Element(name = "Transition", required = false) Transition transition) {
-    if (abortIncompleteMultipartUpload == null
-        && expiration == null
-        && noncurrentVersionExpiration == null
-        && noncurrentVersionTransition == null
-        && transition == null) {
+  // @Element(name = "NoncurrentVersionExpiration", required = false)
+  final NoncurrentVersionExpiration? noncurrentVersionExpiration;
+
+  // @Element(name = "NoncurrentVersionTransition", required = false)
+  final NoncurrentVersionTransition? noncurrentVersionTransition;
+
+  // @Element(name = "Status")
+  final Status status;
+
+  // @Element(name = "Transition", required = false)
+  final Transition? transition;
+
+  /// Constructs server-side encryption configuration rule.
+  LifecycleRule(
+      this.status,
+      this.abortIncompleteMultipartUpload,
+      this.expiration,
+      this.filter,
+      String? id,
+      this.noncurrentVersionExpiration,
+      this.noncurrentVersionTransition,
+      this.transition) {
+    if (abortIncompleteMultipartUpload == null &&
+        expiration == null &&
+        noncurrentVersionExpiration == null &&
+        noncurrentVersionTransition == null &&
+        transition == null) {
       throw ArgumentError(
-          "At least one of action (AbortIncompleteMultipartUpload, Expiration, "
-              + "NoncurrentVersionExpiration, NoncurrentVersionTransition or Transition) must be "
-              + "specified in a rule");
+          "At least one of action (AbortIncompleteMultipartUpload, Expiration, NoncurrentVersionExpiration, NoncurrentVersionTransition or Transition) must be specified in a rule");
     }
 
-    if (id != null) {
-      id = id.trim();
-      if (id.isEmpty()) throw ArgumentError("ID must be non-empty string");
-      if (id.length() > 255) throw ArgumentError("ID must be exceed 255 characters");
+    String? idStr = id;
+    if (idStr != null) {
+      idStr = idStr.trim();
+      if (idStr.isEmpty) throw ArgumentError("ID must be non-empty string");
+      if (idStr.length > 255) {
+        throw ArgumentError("ID must be exceed 255 characters");
+      }
     }
-
-    this.abortIncompleteMultipartUpload = abortIncompleteMultipartUpload;
-    this.expiration = expiration;
-    this.filter = Objects.requireNonNull(filter, "Filter must not be null");
-    this.id = id;
-    this.noncurrentVersionExpiration = noncurrentVersionExpiration;
-    this.noncurrentVersionTransition = noncurrentVersionTransition;
-    this.status = Objects.requireNonNull(status, "Status must not be null");
-    this.transition = transition;
+    id = idStr;
   }
 
-  public AbortIncompleteMultipartUpload abortIncompleteMultipartUpload() {
-    return abortIncompleteMultipartUpload;
-  }
+  factory LifecycleRule.fromJson(Map<String, dynamic> json) =>
+      _$LifecycleRuleFromJson(json);
 
-  public Expiration expiration() {
-    return expiration;
-  }
-
-  public RuleFilter filter() {
-    return this.filter;
-  }
-
-  public String id() {
-    return this.id;
-  }
-
-  public NoncurrentVersionExpiration noncurrentVersionExpiration() {
-    return noncurrentVersionExpiration;
-  }
-
-  public NoncurrentVersionTransition noncurrentVersionTransition() {
-    return noncurrentVersionTransition;
-  }
-
-  public Status status() {
-    return this.status;
-  }
-
-  public Transition transition() {
-    return transition;
-  }
+  Map<String, dynamic> toJson() => _$LifecycleRuleToJson(this);
 }

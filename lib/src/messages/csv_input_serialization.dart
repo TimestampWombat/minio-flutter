@@ -22,16 +22,15 @@ class CsvInputSerialization {
   final String? quoteEscapeCharacter;
 
   final String? recordDelimiter;
-  
-  CsvInputSerialization({
-    this.allowQuotedRecordDelimiter,
-    this.comments,
-    this.fieldDelimiter,
-    this.fileHeaderInfo,
-    this.quoteCharacter,
-    this.quoteEscapeCharacter,
-    this.recordDelimiter,
-  });
+
+  CsvInputSerialization(
+      this.allowQuotedRecordDelimiter,
+      this.comments,
+      this.fieldDelimiter,
+      this.fileHeaderInfo,
+      this.quoteCharacter,
+      this.quoteEscapeCharacter,
+      this.recordDelimiter);
 
   factory CsvInputSerialization.fromJson(Map<String, dynamic> json) =>
       _$CsvInputSerializationFromJson(json);
