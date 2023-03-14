@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:convert/convert.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:minio_flutter/minio_flutter.dart';
@@ -5,6 +7,10 @@ import 'package:xml2json/xml2json.dart';
 import 'package:crypto/crypto.dart' as crypto;
 
 void main() async {
+  InternetAddress address =
+      InternetAddress("1:2:3:4:5:6:7:8", type: InternetAddressType.IPv6);
+      
+  print(address.type);
   // crypto.Digest sha256Digest = crypto.sha256.convert('Wombat'.codeUnits);
   // print(sha256Digest.toString());
   // print(hex.encode(sha256Digest.bytes));

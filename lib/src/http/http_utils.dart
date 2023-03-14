@@ -1,31 +1,38 @@
+import 'dart:io';
+
+import 'package:http/io_client.dart' as http;
 import 'package:time/time.dart';
+import 'package:http/http.dart' as http;
+import 'package:minio_flutter/src/utils/internet_address.dart';
+
+import '../errors/minio_exception.dart';
 
 /// HTTP utilities.
- class HttpUtils {
-   static final List<int> EMPTY_BODY = [];
+class HttpUtils {
+  static final List<int> EMPTY_BODY = [];
 
-   static void validateNotNull(Object? arg, String argName) {
+  static void validateNotNull(Object? arg, String argName) {
     if (arg == null) {
       throw ArgumentError("$argName must not be null.");
     }
   }
 
-   static void validateNotEmptyString(String arg, String argName) {
+  static void validateNotEmptyString(String arg, String argName) {
     validateNotNull(arg, argName);
     if (arg.isEmpty) {
       throw ArgumentError("$argName must be a non-empty string.");
     }
   }
 
-   static void validateNullOrNotEmptyString(String arg, String argName) {
+  static void validateNullOrNotEmptyString(String? arg, String argName) {
     if (arg != null && arg.isEmpty) {
       throw ArgumentError("$argName must be a non-empty string.");
     }
   }
 
-   static void validateHostnameOrIPAddress(String endpoint) {
+  static void validateHostnameOrIPAddress(String endpoint) {
     // Check endpoint is IPv4 or IPv6.
-    if (InetAddressValidator.getInstance().isValid(endpoint)) {
+    if (isValidAddress(endpoint)) {
       return;
     }
 
@@ -37,29 +44,34 @@ import 'package:time/time.dart';
       throw ArgumentError("invalid hostname");
     }
 
-    for (String label in endpoint.split("\\.")) {
+    for (String label in endpoint.split(".")) {
       if (label.isEmpty || label.length > 63) {
         throw ArgumentError("invalid hostname");
       }
 
-      if (!(label.matches("^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$"))) {
+      final regExp = RegExp(r'^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$');
+      if (!regExp.hasMatch(label)) {
         throw ArgumentError("invalid hostname");
       }
     }
   }
 
-   static void validateUrl(Uri url) {
+  static void validateUrl(Uri url) {
     if (url.path != "/") {
       throw ArgumentError("no path allowed in endpoint $url");
     }
   }
 
-   static Uri getBaseUrl(String endpoint) {
+  static Uri getBaseUrl(String endpoint) {
     validateNotEmptyString(endpoint, "endpoint");
-    Uri url = Uri.parse(endpoint);
+    Uri? url;
+    try {
+      url = Uri.parse(endpoint);
+    } catch (e) {}
+
     if (url == null) {
       validateHostnameOrIPAddress(endpoint);
-      url = new Uri.Builder().scheme("https").host(endpoint).build();
+      url = Uri(scheme: "https", host: endpoint);
     } else {
       validateUrl(url);
     }
@@ -67,15 +79,16 @@ import 'package:time/time.dart';
     return url;
   }
 
-   static String getHostHeader(Uri url) {
+  static String getHostHeader(Uri url) {
     String host = url.host;
-    if (InetAddressValidator.getInstance().isValidInet6Address(host)) {
+
+    if (isValidIpv6(host)) {
       host = "[$host]";
     }
 
     // ignore port when port and service matches i.e HTTP -> 80, HTTPS -> 443
-    if ((url.scheme == "http" && url.port == 80)
-        || (url.scheme == "https" && url.port == 443)) {
+    if ((url.scheme == "http" && url.port == 80) ||
+        (url.scheme == "https" && url.port == 443)) {
       return host;
     }
 
@@ -84,117 +97,57 @@ import 'package:time/time.dart';
 
   /// copied logic from
   /// https://github.com/square/okhttp/blob/master/samples/guide/src/main/java/okhttp3/recipes/CustomTrust.java
-   static OkHttpClient enableExternalCertificates(OkHttpClient httpClient, String filename)
-       {
-    Collection<? extends Certificate> certificates = null;
-    try (FileInputStream fis = new FileInputStream(filename)) {
-      certificates = CertificateFactory.getInstance("X.509").generateCertificates(fis);
-    }
-
-    if (certificates == null || certificates.isEmpty()) {
+  static SecurityContext enableExternalCertificates(String filename) {
+    try {
+      SecurityContext context = SecurityContext.defaultContext;
+      context.useCertificateChain(filename, password: 'password');
+      return context;
+    } catch (e) {
       throw ArgumentError("expected non-empty set of trusted certificates");
     }
-
-    char[] password = "password".toCharArray(); // Any password will work.
-
-    // Put the certificates a key store.
-    KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-    // By convention, 'null' creates an empty key store.
-    keyStore.load(null, password);
-
-    int index = 0;
-    for (Certificate certificate : certificates) {
-      String certificateAlias = Integer.toString(index++);
-      keyStore.setCertificateEntry(certificateAlias, certificate);
-    }
-
-    // Use it to build an X509 trust manager.
-    KeyManagerFactory keyManagerFactory =
-        KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-    keyManagerFactory.init(keyStore, password);
-    TrustManagerFactory trustManagerFactory =
-        TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-    trustManagerFactory.init(keyStore);
-
-    final KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
-    final TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-
-    SSLContext sslContext = SSLContext.getInstance("TLS");
-    sslContext.init(keyManagers, trustManagers, null);
-    SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
-    return httpClient
-        .newBuilder()
-        .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustManagers[0])
-        .build();
   }
 
-   static OkHttpClient newDefaultHttpClient(
+  static http.Client newDefaultHttpClient(
       int connectTimeout, int writeTimeout, int readTimeout) {
-    OkHttpClient httpClient =
-        new OkHttpClient()
-            .newBuilder()
-            .connectTimeout(connectTimeout.milliseconds)
-            .writeTimeout(writeTimeout.milliseconds)
-            .readTimeout(readTimeout.milliseconds)
-            .protocols(Arrays.asList(Protocol.HTTP_1_1))
-            .build();
-    String filename = System.getenv("SSL_CERT_FILE");
-    if (filename != null && !filename.isEmpty()) {
+    SecurityContext? context;
+    String? filename = String.fromEnvironment("SSL_CERT_FILE");
+    if (filename != null && filename.isNotEmpty) {
       try {
-        httpClient = enableExternalCertificates(httpClient, filename);
-      } catch (GeneralSecurityException | IOException e) {
-        throw new RuntimeException(e);
+        context = enableExternalCertificates(filename);
+      } catch (e) {
+        throw RuntimeException('$e');
       }
     }
-    return httpClient;
+
+    HttpClient client = HttpClient(context: context);
+
+    client.connectionTimeout = connectTimeout.milliseconds;
+    // .connectTimeout(connectTimeout.milliseconds)
+    // .writeTimeout(writeTimeout.milliseconds)
+    // .readTimeout(readTimeout.milliseconds)
+    // .protocols(Arrays.asList(Protocol.HTTP_1_1))
+    // .build();
+    return http.IOClient(client);
   }
 
-  @SuppressFBWarnings(value = "SIC", justification = "Should not be used in production anyways.")
-   static OkHttpClient disableCertCheck(OkHttpClient client)
-      throws KeyManagementException, NoSuchAlgorithmException {
-    final TrustManager[] trustAllCerts =
-        new TrustManager[] {
-          new X509TrustManager() {
-            @Override
-             void checkClientTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {}
+  static http.Client disableCertCheck(http.Client client) {
+    var ioClient = HttpClient()
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
 
-            @Override
-             void checkServerTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {}
-
-            @Override
-             X509Certificate[] getAcceptedIssuers() {
-              return new X509Certificate[] {};
-            }
-          }
-        };
-
-    final SSLContext sslContext = SSLContext.getInstance("SSL");
-    sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-    final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-
-    return client
-        .newBuilder()
-        .sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0])
-        .hostnameVerifier(
-            new HostnameVerifier() {
-              @Override
-               boolean verify(String hostname, SSLSession session) {
-                return true;
-              }
-            })
-        .build();
+    return http.IOClient(ioClient);
   }
 
-   static OkHttpClient setTimeout(
-      OkHttpClient client, int connectTimeout, int writeTimeout, int readTimeout) {
-    return client
-        .newBuilder()
-        .connectTimeout(connectTimeout.milliseconds)
-        .writeTimeout(writeTimeout.milliseconds)
-        .readTimeout(readTimeout.milliseconds)
-        .build();
+// TODO: implement this
+  static http.Client setTimeout(http.Client client, int connectTimeout,
+      int writeTimeout, int readTimeout) {
+    // return client
+    //     .newBuilder()
+    //     .connectTimeout(connectTimeout.milliseconds)
+    //     .writeTimeout(writeTimeout.milliseconds)
+    //     .readTimeout(readTimeout.milliseconds)
+    //     .build();
+    return http.IOClient(
+        HttpClient()..connectionTimeout = connectTimeout.milliseconds);
   }
 }
