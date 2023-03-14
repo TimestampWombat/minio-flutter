@@ -1,10 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
 
+import '../utils/http_url.dart' as HttpUrl;
 import '../utils/supplier.dart';
 import 'assume_role_base_provider.dart' as AssumeRoleBaseProvider;
 import 'credentials.dart';
-import 'http_url.dart' as HttpUrl;
 import 'jwt.dart';
 import 'web_identity_client_grants_provider.dart';
 

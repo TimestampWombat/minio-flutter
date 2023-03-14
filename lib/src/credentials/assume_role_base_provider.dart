@@ -9,8 +9,8 @@ import 'package:xml2json/xml2json.dart';
 
 import 'package:minio_flutter/src/errors/minio_exception.dart';
 import 'package:minio_flutter/src/utils/responsex.dart';
+import '../utils/http_url.dart' as HttpUrl;
 import 'credentials.dart';
-import 'http_url.dart' as HttpUrl;
 import 'provider.dart';
 
 abstract class AssumeRoleBaseProvider implements Provider {

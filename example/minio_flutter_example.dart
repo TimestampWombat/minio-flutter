@@ -1,11 +1,24 @@
 import 'package:convert/convert.dart';
+import 'package:cryptography/cryptography.dart';
 import 'package:minio_flutter/minio_flutter.dart';
 import 'package:xml2json/xml2json.dart';
-import 'package:crypto/crypto.dart';
+import 'package:crypto/crypto.dart' as crypto;
 
-void main() {
-  Digest sha256Digest = sha256.convert('Wombat'.codeUnits);
-  print(sha256Digest.toString());
+void main() async {
+  // crypto.Digest sha256Digest = crypto.sha256.convert('Wombat'.codeUnits);
+  // print(sha256Digest.toString());
+  // print(hex.encode(sha256Digest.bytes));
+  String expected =
+      "0a0a2f7259506e5a57419c806d4396ddd00c0567f248e24402136762d662acc8";
+  String result =
+      hex.encode(await sumHmac("Wombat".codeUnits, "Koala".codeUnits));
+  print(expected == result);
+}
+
+Future<List<int>> sumHmac(List<int> key, List<int> data) async {
+  SecretKey secretKey = SecretKey(key);
+  Mac mac = await Hmac.sha256().calculateMac(data, secretKey: secretKey);
+  return mac.bytes;
 }
 
 void mainXml() {

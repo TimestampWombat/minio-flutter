@@ -14,4 +14,9 @@ class Builder {
     uri.queryParameters[key] = value;
     return this;
   }
+
+  Builder addEncodedQueryParameter(String key, String value) {
+    uri.queryParameters[key] = value;
+    return this;
+  }
 }

@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:time/time.dart';
 
+import '../utils/http_url.dart' as HttpUrl;
 import '../utils/supplier.dart';
 import 'assume_role_base_provider.dart';
-import 'http_url.dart' as HttpUrl;
 import 'jwt.dart';
 
 /// Base class of WebIdentity and ClientGrants providers.

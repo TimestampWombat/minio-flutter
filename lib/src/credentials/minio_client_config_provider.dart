@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:json_annotation/json_annotation.dart';
+
 import '../errors/minio_exception.dart';
 import 'credentials.dart';
 import 'environment_provider.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'minio_client_config_provider.g.dart';
 

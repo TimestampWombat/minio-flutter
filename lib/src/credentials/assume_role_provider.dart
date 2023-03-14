@@ -5,10 +5,11 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'package:minio_flutter/src/errors/minio_exception.dart';
 import '../digest.dart';
+import '../signer.dart';
 import '../time.dart';
+import '../utils/http_url.dart' as HttpUrl;
 import 'assume_role_base_provider.dart';
 import 'credentials.dart';
-import 'http_url.dart' as HttpUrl;
 
 part 'assume_role_provider.g.dart';
 

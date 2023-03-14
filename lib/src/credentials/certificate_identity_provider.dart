@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
 
+import '../utils/http_url.dart' as HttpUrl;
 import 'assume_role_base_provider.dart';
 import 'credentials.dart';
-import 'http_url.dart' as HttpUrl;
 
 part 'certificate_identity_provider.g.dart';
 
